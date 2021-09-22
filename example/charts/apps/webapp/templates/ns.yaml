@@ -1,0 +1,12 @@
+{{- if .Values.create_ns }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: {{ .Values.namespace }}
+  name: {{ .Values.namespace }}
+spec:
+  finalizers:
+    - kubernetes
+
+{{- end }}

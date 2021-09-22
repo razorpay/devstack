@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/browser-xss-filter: 'true'
+    ingress.kubernetes.io/custom-response-headers: 'Server:||X-Powered-By:'
+    ingress.kubernetes.io/force-hsts: 'true'
+    ingress.kubernetes.io/hsts-include-subdomains: 'true'
+    ingress.kubernetes.io/hsts-max-age: '315360000'
+    kubernetes.io/ingress.class: '{{ .Values.ingress_concierge_class}}'
+  name: golang-gin-crud
+  namespace: '{{ .Values.namespace }}'
+spec:
+  rules:
+    - host: '{{ .Values.golang_gin-crud_host }}'
+      http:
+        paths:
+          - backend:
+              serviceName: golang-gin-crud
+              servicePort: 80
+            path: /

@@ -1,0 +1,11 @@
+create_ns: true
+namespace: example
+ingress_concierge_class: traefik-internal
+golang_gin-crud_replicas: 1
+golang_gin-crud_image_tag: example/golang-gin-crud:latest
+golang_gin-crud_requests_memory: 200Mi
+golang_gin-crud_requests_cpu: 200m
+golang_gin-crud_limits_memory: 200Mi
+golang_gin-crud_dns_policy: ClusterFirst
+golang_gin-crud_nodeselector: node-role.kubernetes.io/worker-generic
+golang_gin-crud_host: crud.example.in
