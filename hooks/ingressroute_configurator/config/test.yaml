@@ -1,0 +1,6 @@
+ingressRouteName: dashboard
+headerValue: srinidhi-1
+ingressUrl: dashboard.dev.test.in
+namespace: dashboard
+serviceName: dashboard-srinidhi
+servicePort: 80
