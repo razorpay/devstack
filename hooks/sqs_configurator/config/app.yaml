@@ -1,0 +1,9 @@
+queue:
+  q1:
+    name: card_create_srinidhi
+    secretKey: JOB.CARD_CREATE
+updateSecret: true
+kubeSecret: kube-secret
+namespace: namespace
+provider: localstack
+enableEndpointPrefix: true

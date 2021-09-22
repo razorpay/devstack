@@ -80,8 +80,8 @@ func Initialize(){
 	}
 	defer log.Sync()
 
-	if *params.Action== "" {
-		log.Info("Invalid Parameters\n")
+	if *params.Action == "" {
+		log.Debug("inv", zap.String("Invalid Parameters", "Please provide a valid input"))
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
