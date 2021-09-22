@@ -1,0 +1,10 @@
+Required Params :
+i) Ingressroute name
+ii) header key
+iii) ingress url
+iv) header value
+
+
+
+
+

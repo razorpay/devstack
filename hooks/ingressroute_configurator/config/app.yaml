@@ -1,0 +1,6 @@
+ingressRouteName: x
+headerValue: srinidhi-1
+ingressUrl: x.dev.test.in
+namespace: x
+serviceName: x-srinidhi
+servicePort: 80
