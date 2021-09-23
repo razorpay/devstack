@@ -2,11 +2,11 @@ package message
 
 import (
 	"context"
+	"github.com/razorpay/devstack/example/apps/sqs/internal/pkg/cloud"
 	"log"
 	"time"
 	"fmt"
 
-	"github.com/razorpay/devstack/example/apps/sqs/internal/pkg/cloud"
 )
 
 func Message(client cloud.MessageClient) {
@@ -71,7 +71,7 @@ func send(ctx context.Context, client cloud.MessageClient, queueURL string) {
 			},
 			{
 				Key:   "Timestamp",
-				Value: fmt.Sprintf("%s", timestamp),
+				Value: fmt.Sprintf("%v", timestamp),
 				Type:  "Number",
 			},
 		},

@@ -4,13 +4,13 @@ import (
 	"log"
 	"time"
     "github.com/razorpay/devstack/example/apps/sqs/internal/message"
-	"github.com/razorpay/devstack/example/apps/sqs/internal/pkg/cloud/aws"
+	"github.com/razorpay/devstack/example/apps/sqs/internal/pkg/cloud"
 )
 
 func main() {
 	// Create a session instance.
-	awsConfig := aws.NewConfig()
-	sqs, err := aws.New(aws.Config{
+	awsConfig := cloud.NewConfig()
+	sqs, err := cloud.New(cloud.Config{
 		Address: awsConfig.Address,
 		Region: awsConfig.Region,
 		Profile: awsConfig.Profile,
@@ -24,7 +24,7 @@ func main() {
 
 	// Test message
 	for {
-		message.Message(aws.NewSQS(sqs, time.Second*5))
+		message.Message(cloud.NewSQS(sqs, time.Second*5))
 		time.Sleep(time.Second)
 		log.Printf("Resending another message")
 	}
