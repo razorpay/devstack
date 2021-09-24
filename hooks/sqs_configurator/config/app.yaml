@@ -1,7 +1,7 @@
 queue:
   q1:
-    name: card_create_srinidhi
-    secretKey: JOB.CARD_CREATE
+    name: welcome_email_queue
+    secretKey: QUEUE_NAME
 updateSecret: true
 kubeSecret: kube-secret
 namespace: namespace

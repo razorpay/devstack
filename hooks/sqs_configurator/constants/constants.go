@@ -4,7 +4,7 @@ const (
 	LOCALSTACK_ENDPOINT = "https://localstack-services.dev.razorpay.in"
 	LOCALSTACK_PREFIX   = "https://localstack-services.dev.razorpay.in/000000000000"
 	AWS_ENDPOINT        = "https://sqs.ap-south-1.amazonaws.com"
-	AWS_PREFIX          = "https://sqs.ap-south-1.amazonaws.com/141592612890"
+	AWS_PREFIX          = "https://sqs.ap-south-1.amazonaws.com/000000000000"
 	AWS_REGION          = "ap-south-1"
 	MAX_RETRIES         = 5
 	QUEUE_DELAY_SECONDS = "60"

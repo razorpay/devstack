@@ -26,9 +26,9 @@ type QueueConfig struct {
 	EnableEndpointPrefix bool
 }
 
+
 // Params defines the configuration for the application actions
 type Params struct {
-	NameFlag  *string
 	DebugFlag *bool
 	IsLocal   *bool
 }
@@ -41,7 +41,6 @@ var (
 )
 
 func main() {
-	paramsFlag.NameFlag = flag.String("name", "test", "Config File Name")
 	paramsFlag.DebugFlag = flag.Bool("debug", false, "To log all events")
 	paramsFlag.IsLocal = flag.Bool("local", false, "Local debugging")
 
@@ -66,11 +65,6 @@ func initialize() {
 	}
 	defer log.Sync()
 
-	if *paramsFlag.NameFlag == "" {
-		log.Info("inv", zap.String("IP", "Invalid parameters provided"))
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
 }
 
 //getConfig internal method for reading zap configuration
