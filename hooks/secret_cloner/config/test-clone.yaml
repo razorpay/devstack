@@ -1,0 +1,5 @@
+action: clone
+namespace: vendor-payments
+secretName: vendor-payments
+secretSuffix: srinidhi
+ttl: 6h

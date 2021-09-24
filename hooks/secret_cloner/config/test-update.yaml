@@ -1,0 +1,8 @@
+action: update
+namespace: vendor-payments
+secretName: vendor-payments-srinidhi
+ttl: 6h
+updateEntries:
+  secret1:
+    key: KEY
+    value: VALUE

@@ -1,0 +1,8 @@
+# JetBrains project folders.
+.idea/
+
+# VSCode folder.
+.vscode/*
+
+# Desktop Services Store - Mac.
+.DS_Store
