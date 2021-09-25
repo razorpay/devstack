@@ -1,21 +1,20 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+{{ if not .Values.devstack_label }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
+  {{ if .Values.devstack_label }}
   annotations:
-    ingress.kubernetes.io/browser-xss-filter: 'true'
-    ingress.kubernetes.io/custom-response-headers: 'Server:||X-Powered-By:'
-    ingress.kubernetes.io/force-hsts: 'true'
-    ingress.kubernetes.io/hsts-include-subdomains: 'true'
-    ingress.kubernetes.io/hsts-max-age: '315360000'
-    kubernetes.io/ingress.class: '{{ .Values.ingress_concierge_class}}'
-  name: golang-gin-crud
-  namespace: '{{ .Values.namespace }}'
+    janitor/ttl: "{{ .Values.ttl }}"
+  {{ end }}
+  name: demo-app
+  namespace: {{ .Values.namespace }}
 spec:
-  rules:
-    - host: '{{ .Values.golang_gin-crud_host }}'
-      http:
-        paths:
-          - backend:
-              serviceName: golang-gin-crud
-              servicePort: 80
-            path: /
+  entryPoints:
+    - http
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.golang_gin_crud_host}}`)
+      services:
+        - name: golang-gin-crud
+          port: 80
+{{ end }}

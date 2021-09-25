@@ -1,3 +1,5 @@
+#creation of namespace not required when running helmfile with devstack label as the namespace is already created
+{{ if not .Values.devstack_label }}
 {{- if .Values.create_ns }}
 apiVersion: v1
 kind: Namespace
@@ -8,5 +10,6 @@ metadata:
 spec:
   finalizers:
     - kubernetes
-
 {{- end }}
+{{ end }}
+

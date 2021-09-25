@@ -1,51 +1,59 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  {{ if .Values.devstack_label }}
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  {{ end }}
+  {{ if .Values.devstack_label }}
+  name: golang-gin-crud-{{ .Values.devstack_label }}
+  {{ else }}
   name: golang-gin-crud
+  {{ end }}
   namespace: {{ .Values.namespace }}
   labels:
+    {{ if .Values.devstack_label }}
+    name: golang-gin-crud-{{ .Values.devstack_label }}
+    {{ else }}
     name: golang-gin-crud
+    {{ end }}
 spec:
-  replicas: {{ .Values.golang_gin-crud_replicas }}
+  replicas: {{ .Values.golang_gin_crud_replicas }}
   selector:
     matchLabels:
+      {{ if .Values.devstack_label }}
+      app: golang-gin-crud-{{ .Values.devstack_label }}
+      {{ else }}
       app: golang-gin-crud
+      {{ end }}
   template:
     metadata:
       labels:
+        {{ if .Values.devstack_label }}
+        app: golang-gin-crud-{{ .Values.devstack_label }}
+        {{ else }}
         app: golang-gin-crud
+        {{ end }}
     spec:
       automountServiceAccountToken: true
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: name
-                      operator: In
-                      values:
-                        - golang-gin-crud
-                topologyKey: kubernetes.io/hostname
-              weight: 100
       containers:
         - name: golang-gin-crud
           imagePullPolicy: IfNotPresent
-          image: {{ .Values.golang_gin-crud_image_tag }}
+          image: example/golang-gin-crud:{{ .Values.image }}
           ports:
             - containerPort: 9090
           resources:
             requests:
-              memory: {{ .Values.golang_gin-crud_requests_memory }}
-              cpu: {{ .Values.golang_gin-crud_requests_cpu }}
+              memory: {{ .Values.golang_gin_crud_requests_memory }}
+              cpu: {{ .Values.golang_gin_crud_requests_cpu }}
             limits:
-              memory: {{ .Values.golang_gin-crud_limits_memory }}
+              memory: {{ .Values.golang_gin_crud_limits_memory }}
           command:
             - ./crud-webapp
-      dnsPolicy: {{ .Values.golang_gin-crud_dns_policy }}
+      dnsPolicy: {{ .Values.golang_gin_crud_dns_policy }}
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 60
       nodeSelector:
-        {{ .Values.golang_gin-crud_nodeselector }}: ""
+        {{ .Values.golang_gin_crud_nodeselector }}: ""

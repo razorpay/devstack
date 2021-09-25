@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  name: injectheader-{{ .Values.devstack_label }}
+  namespace: {{ .Values.namespace }}
+spec:
+  headers:
+    customRequestHeaders:
+      uberctx-dev-serve-user: {{ .Values.devstack_label }}
+
+---
+
+kind: IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+metadata:
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  name: golang-gin-crud-{{ .Values.devstack_label }}
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - http
+  routes:
+    - kind: Rule
+      match: Host(`demo-{{ .Values.devstack_label }}.dev.com`)
+      services:
+        - name: 'golang-gin-crud-{{ .Values.devstack_label }}'
+          port: 80
+      middlewares:
+        - name: injectheader-{{ .Values.devstack_label }}
