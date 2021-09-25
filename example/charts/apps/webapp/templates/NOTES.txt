@@ -1,0 +1,12 @@
+*****************HURRRAAAYYYYY******************
+Thank you for installing {{ .Chart.Name }}.
+
+This installation of yours can be accessed on
+URL :  https://{{ .Values.golang_gin_crud_host }}
+Header : "uberctx-dev-serve-user": "{{ .Values.devstack_label }}"
+
+OR
+
+URL : https://demo-{{ .Values.devstack_label }}.dev.com
+
+************************************************
