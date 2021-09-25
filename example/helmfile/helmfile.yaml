@@ -1,0 +1,25 @@
+# Helm defaults that cleans up on failure
+helmDefaults:
+  cleanupOnFail: true
+  wait: true
+  recreatePods: true
+  createNamespace: false
+  timeout: 600
+
+environments:
+  default:
+    values:
+      # The devstack label for creating the ephemral infra
+      - devstack_label: awesome_devstack
+      # ttl is the time to live for all the objects in minutes , default being 360(6 hrs)
+      - ttl: 6h
+
+releases:
+  # this contains the list of applications required for development based on the usecase
+  - name: golang-gin-crud-{{ .Values.devstack_label }}
+    namespace: demo
+    chart: ../charts/apps/webapp
+    values:
+      - image: latest
+      - devstack_label: {{ .Values.devstack_label }}
+      - ttl: {{ .Values.ttl }}
