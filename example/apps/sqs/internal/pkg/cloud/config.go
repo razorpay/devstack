@@ -20,7 +20,7 @@ func NewConfig() *SQSConfig {
 		Profile: getEnv("AWS_PROFILE", "localstack"),
 		AwsKey: getEnv("AWS_KEY", "test"),
 		AwsSecret: getEnv("AWS_SECRET", "test"),
-		QueueName: getEnv("QUEUE_NAME", "welcome-email-queue.dlx"),
+		QueueName: getEnv("QUEUE_NAME", "welcome-email-queue"),
 	}
 }
 

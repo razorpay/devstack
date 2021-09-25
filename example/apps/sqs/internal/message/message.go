@@ -11,7 +11,6 @@ import (
 
 func Message(client cloud.MessageClient) {
 	ctx := context.Background()
-
 	dlxURL := createQueueDLX(ctx, client)
 	queURL := createQueue(ctx, client)
 	dlxARN := queueARN(ctx, client, dlxURL)
@@ -22,7 +21,9 @@ func Message(client cloud.MessageClient) {
 }
 
 func createQueueDLX(ctx context.Context, client cloud.MessageClient) string {
-	url, err := client.CreateQueue(ctx, "welcome-email-queue.dlx", true)
+	awsConfig := cloud.NewConfig()
+	queueName := fmt.Sprintf("%s.dlx", awsConfig.QueueName)
+	url, err := client.CreateQueue(ctx, queueName, true)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -32,7 +33,8 @@ func createQueueDLX(ctx context.Context, client cloud.MessageClient) string {
 }
 
 func createQueue(ctx context.Context, client cloud.MessageClient) string {
-	url, err := client.CreateQueue(ctx, "welcome-email-queue", false)
+	awsConfig := cloud.NewConfig()
+	url, err := client.CreateQueue(ctx, awsConfig.QueueName, false)
 	if err != nil {
 		log.Fatalln(err)
 	}
