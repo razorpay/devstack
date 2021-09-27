@@ -1,6 +1,6 @@
-action: update
-namespace: vendor-payments
-secretName: vendor-payments-srinidhi
+action: update=
+namespace: demo
+secretName: demo-webapp
 ttl: 6h
 updateEntries:
   secret1:

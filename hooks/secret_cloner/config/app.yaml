@@ -1,5 +1,5 @@
 action: clone
-namespace: vendor-payments
-secretName: vendor-payments
-secretSuffix: srinidhi-testing
+namespace: demo
+secretName: demo
+secretSuffix: webapp-demo
 ttl: 6h
