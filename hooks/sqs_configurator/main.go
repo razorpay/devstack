@@ -74,6 +74,8 @@ func getConfig(level zapcore.Level) zap.Config {
 		Level:            zap.NewAtomicLevelAt(level),
 		OutputPaths:      []string{"stderr"},
 		ErrorOutputPaths: []string{"stderr"},
+		EncoderConfig:   zapcore.EncoderConfig{
+			MessageKey: "message"},
 	}
 	return cfg
 }
@@ -94,7 +96,7 @@ func initializeConfig() {
 func Process() {
 	sqs, err := queue.New(queueData.Provider)
 	if err != nil {
-		log.Debug("failure", zap.String("FAILURE", "Error in creating SQS client"))
+		log.Debug("Error in creating SQS client")
 		os.Exit(1)
 	}
 
@@ -102,7 +104,7 @@ func Process() {
 	for _, value := range queueData.Queue {
 		qUrl, err := sqs.CreateQueue(value.Name)
 		if err != nil {
-			log.Debug("failure", zap.String("FAILURE", "Failed creating SQS queue for queue with name "+value.Name+err.Error()))
+			log.Debug("Failed creating SQS queue for queue with name "+value.Name+err.Error())
 			os.Exit(1)
 		}
 		//update the secret only if update secret is true
@@ -116,7 +118,7 @@ func Process() {
 			}
 			err = secrets.UpdateSecret(queueData.Namespace, queueData.KubeSecret, value.SecretKey, queueVal, paramsFlag.IsLocal)
 			if err != nil {
-				log.Debug("failure", zap.String("FAILURE", "failed to create key "+err.Error()))
+				log.Debug("failed to create key "+err.Error())
 				os.Exit(1)
 			}
 		}

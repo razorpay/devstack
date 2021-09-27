@@ -63,10 +63,10 @@ func New(namespace string, secretName string, isLocal *bool) (KubeSecret, error)
 func UpdateSecret(namespace, secretName, key, value string, isLocal *bool) error {
 	sec, setupErr := New(namespace, secretName, isLocal)
 	if setupErr != nil {
-		zap.L().Info("err", zap.String("ERROR", "Error creating the secret in the namespace"))
+		zap.L().Info("Error creating the secret in the namespace")
 		return errors.New("Error creating the secret in the namespace")
 	}
-	zap.L().Info("info", zap.String("INFO", "Adding new key/value pair to secret as a string (StringData)"))
+	zap.L().Info("Adding new key/value pair to secret as a string (StringData)")
 	sec.secret.Data[key] = []byte(value)
 
 	_, err := secretsClient.Update(context.Background(), sec.secret, metaV1.UpdateOptions{})
