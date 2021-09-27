@@ -1,0 +1,11 @@
+create_ns: true
+namespace: demo
+golang_gin_crud_replicas: 1
+image: latest
+golang_gin_crud_requests_memory: 200Mi
+golang_gin_crud_requests_cpu: 200m
+golang_gin_crud_limits_memory: 200Mi
+golang_gin_crud_dns_policy: ClusterFirst
+golang_gin_crud_nodeselector: node.kubernetes.io/worker-generic
+golang_gin_crud_host: demo.dev.com
+

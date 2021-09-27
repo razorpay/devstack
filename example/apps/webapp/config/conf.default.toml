@@ -1,0 +1,25 @@
+[tracing]
+    serviceName = "TracingApp"
+    serviceVersion = "v1"
+    env = "dev"
+    jaegerHostName = "localhost"
+    jaegerPort = "6831"
+    enabled = true
+    enableDebug = true
+    RequestHeaderExclusions = {"Authorization"= true}
+    RequestQueryParamExclusions = {}
+    RouteURLsToExclude = ["/status"]
+    [tracing.context]
+        contextPropogationKey = "Razorpay-Trace-Id"
+        defaultContextPropogationValue = "unknown"
+        baggagePrefix = "Razorpay"
+        contextKey = "ctx"
+        baggageKeys = "BaggageKeys"
+    [tracing.database]
+        peerService = "mysql-tracingapp"
+        hostName = "localhost"
+        port = 3306
+    [tracing.redis]
+        peerService = "redis-tracingapp"
+        hostName = "localhost"
+        port = 3306
