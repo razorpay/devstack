@@ -1,4 +1,4 @@
-FROM c.rzp.io/razorpay/onggi:golang-1.13-alpine3.10
+FROM golang:1.15-alpine
 # enable Go modules support
 ENV GO111MODULE=on
 RUN mkdir /src
