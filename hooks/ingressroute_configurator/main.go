@@ -80,8 +80,8 @@ func Initialize(){
 	}
 	defer log.Sync()
 
-	if *params.Action== "" {
-		log.Info("Invalid Parameters\n")
+	if *params.Action == "" {
+		log.Debug("Please provide a valid input")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
@@ -94,6 +94,8 @@ func getConfig(level zapcore.Level) zap.Config {
 		Level:            zap.NewAtomicLevelAt(level),
 		OutputPaths:      []string{"stderr"},
 		ErrorOutputPaths: []string{"stderr"},
+		EncoderConfig:   zapcore.EncoderConfig{
+			MessageKey: "message"},
 	}
 	return cfg
 }

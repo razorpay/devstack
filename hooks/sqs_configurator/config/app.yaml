@@ -1,0 +1,9 @@
+queue:
+  q1:
+    name: welcome_email_queue
+    secretKey: QUEUE_NAME
+updateSecret: true
+kubeSecret: kube-secret
+namespace: namespace
+provider: localstack
+enableEndpointPrefix: true

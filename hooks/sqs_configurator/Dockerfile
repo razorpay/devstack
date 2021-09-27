@@ -7,10 +7,10 @@ COPY ./go.mod .
 COPY ./go.sum .
 RUN go mod download
 ADD . /src/
-RUN CGO_ENABLED=0 GOOS=linux go build -a -o bin/irc main.go
-RUN addgroup -S irc
-RUN adduser -S irc -G irc
-RUN chown -R irc:irc /src
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o bin/sqsc main.go
+RUN addgroup -S sqsc
+RUN adduser -S sqsc -G sqsc
+RUN chown -R sqsc:sqsc /src
 RUN chmod +x ./entrypoint.sh
-USER irc
+USER sqsc
 ENTRYPOINT ["./entrypoint.sh"]

@@ -1,0 +1,30 @@
+# JetBrains project folders.
+.idea/
+
+# VSCode folder.
+.vscode/*
+
+# Desktop Services Store - Mac.
+.DS_Store
+
+# Vendor modules.
+vendor/*
+
+# App Binaries.
+bin/*
+
+# App builds
+build/*
+
+# Dont ignore any .gitkeep files, please.a
+!*.gitkeep
+
+dump.rdb
+.tmp
+
+# This needs to be sourced from the proto repo.
+proto
+
+# Generated protobuf files.
+#rpc/*
+
