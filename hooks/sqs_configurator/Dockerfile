@@ -12,5 +12,6 @@ RUN addgroup -S sqsc
 RUN adduser -S sqsc -G sqsc
 RUN chown -R sqsc:sqsc /src
 RUN chmod +x ./entrypoint.sh
+
 USER sqsc
 ENTRYPOINT ["./entrypoint.sh"]
