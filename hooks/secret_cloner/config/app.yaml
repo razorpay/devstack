@@ -1,0 +1,5 @@
+action: clone
+namespace: demo
+secretName: demo
+secretSuffix: webapp-demo
+ttl: 6h
