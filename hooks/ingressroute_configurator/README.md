@@ -35,7 +35,7 @@ spec:
               value: 'alice-app'
             - name: SERVICEPORT
               value: '80'
-          image: 'docker/razorpay:irc'
+          image: 'razorpay/devstack:irc'
           imagePullPolicy: Always
           name: irc
       imagePullSecrets:

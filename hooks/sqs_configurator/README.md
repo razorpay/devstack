@@ -22,7 +22,7 @@ SQS configurator
    template:
      spec:
        containers:
-         - image: 'docker/razorpay/devstack:sqsc'
+         - image: 'razorpay/devstack:sqsc'
            imagePullPolicy: IfNotPresent
            name: irc
            volumeMounts:
