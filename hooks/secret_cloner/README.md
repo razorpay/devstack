@@ -58,7 +58,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 'razorpay/devstack:sec'
+        - image: 'docker/razorpay/devstack:sec'
           imagePullPolicy: IfNotPresent
           name: sec
           volumeMounts:
