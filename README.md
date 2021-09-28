@@ -12,6 +12,24 @@ In a nutshell: **"Its a client based development tool for building cloud native 
 ## Presentations and Videos
 - [Devstack Presentation: Slides](https://static.sched.com/hosted_files/osselc21/50/Improving_Developer_Experience_Srinidhi_VV_09292021_v1.pdf)
 
+
+## Setup And Installation
+### Pre-Requisites
+As we mentioned earlier, our solution is slightly opinionated and requires the following stack:
+
+- Cloud Provider : AWS(Note: Our custom infra helm hooks are all designed for AWS. However, it can be extended. See details below)
+- Kubernetes: Requires verion 1.15+
+- Traefik: 2.0+ to be deployed on the kubernetes cluster above. Please see the [official installation instructions](https://doc.traefik.io/traefik/v2.0/getting-started/install-traefik/)
+- Helm: 3.0+
+- LocalStack: To be deployed on kubernetes cluster above. Refer to [LocalStack](https://github.com/localstack/localstack#using-helm)
+- Kube Janitor: Deploy [Kube Janitor](https://codeberg.org/hjacobs/kube-janitor#usage)
+
+Other requirements (For hot-reload)
+If you are using a loosely typed language like php / python etc, then you can safely skip this section. For static languages like golang, java, nodejs etc, please refer below:
+- Golang: [CompileDaemon](https://github.com/githubnemo/CompileDaemon)
+- NodeJs: [Nodemon](https://www.npmjs.com/package/nodemon)
+- Java: [GradleDaemon](https://docs.gradle.org/current/userguide/gradle_daemon.html) or [MavenDaemon](https://github.com/mvndaemon/mvnd)
+
 ## Design Goals
 ### High Level Goals
 - Streamlined Dev Workflow: Provide a streamlined workflow and faster merges to `main` or `master` branches. 
@@ -35,23 +53,9 @@ In a nutshell: **"Its a client based development tool for building cloud native 
 - [x] Traffic routing to right upstream. Uses traefik 2.0 [IngressRoute](https://doc.traefik.io/traefik/v2.0/providers/kubernetes-crd/)
 - [x] Ability to selectively route traffic to different upstream. Done via [opentelemetry context/header propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md)
 - [x] Ability to expose preview URL for all services
+- [x] Automatic timed cleanup(`ttl`) of resources using [Kube Janitor](https://codeberg.org/hjacobs/kube-janitor)
 
 ## Docs
-
-### Pre-Requisites
-As we mentioned earlier, our solution is slightly opinionated and requires the following stack:
-
-- Cloud Provider : AWS(Note: Our custom infra helm hooks are all designed for AWS. However, it can be extended. See details below)
-- Kubernetes: Requires verion 1.15+
-- Traefik: 2.0+ to be deployed on the kubernetes cluster above. Please see the [official installation instructions](https://doc.traefik.io/traefik/v2.0/getting-started/install-traefik/)
-- Helm: 3.0+
-- LocalStack: To be deployed on kubernetes cluster above. Refer to [LocalStack](https://github.com/localstack/localstack#using-helm)
-
-Other requirements (For hot-reload)
-If you are using a loosely typed language like php / python etc, then you can safely skip this section. For static languages like golang, java, nodejs etc, please refer below:
-- Golang: [CompileDaemon](https://github.com/githubnemo/CompileDaemon)
-- NodeJs: [Nodemon](https://www.npmjs.com/package/nodemon)
-- Java: [GradleDaemon](https://docs.gradle.org/current/userguide/gradle_daemon.html) or [MavenDaemon](https://github.com/mvndaemon/mvnd)
 
 ### Architecture
 Please refer to the [Architecture Overview](Architecture.md#) for entire details on the devstack architecture.
