@@ -3,10 +3,10 @@ FROM golang:1.15-alpine
 ENV GO111MODULE=on
 RUN mkdir /src
 WORKDIR /src
-COPY ./go.mod .
-COPY ./go.sum .
+COPY ./hooks/sqs_configurator/go.mod .
+COPY ./hooks/sqs_configurator/go.sum .
 RUN go mod download
-ADD . /src/
+ADD ./hooks/sqs_configurator/ /src/
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o bin/sqsc main.go
 RUN addgroup -S sqsc
 RUN adduser -S sqsc -G sqsc

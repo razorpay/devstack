@@ -3,10 +3,10 @@ FROM golang:1.15-alpine
 ENV GO111MODULE=on
 RUN mkdir /src
 WORKDIR /src
-COPY ./tools/hooks/secret_cloner/go.mod .
-COPY ./tools/hooks/secret_cloner/go.sum .
+COPY ./hooks/secret_cloner/go.mod .
+COPY ./hooks/secret_cloner/go.sum .
 RUN go mod download
-ADD ./tools/hooks/secret_cloner/ /src/
+ADD ./hooks/secret_cloner/ /src/
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o bin/sec main.go
 RUN chmod +x ./entrypoint.sh
 RUN addgroup -S secc
