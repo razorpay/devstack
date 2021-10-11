@@ -1,4 +1,4 @@
-# devstack
+# Devstack
 Devstack is Razorpay's Developer Experience Solution for cloud on laptop
 
 ## What is Devstack
@@ -11,7 +11,6 @@ In a nutshell: **"Its a client based development tool for building cloud native 
 
 ## Presentations and Videos
 - [Devstack Presentation: Slides](https://static.sched.com/hosted_files/osselc21/50/Improving_Developer_Experience_Srinidhi_VV_09292021_v1.pdf)
-
 
 ## Setup And Installation
 ### Pre-Requisites
@@ -29,6 +28,13 @@ If you are using a loosely typed language like php / python etc, then you can sa
 - Golang: [CompileDaemon](https://github.com/githubnemo/CompileDaemon)
 - NodeJs: [Nodemon](https://www.npmjs.com/package/nodemon)
 - Java: [GradleDaemon](https://docs.gradle.org/current/userguide/gradle_daemon.html) or [MavenDaemon](https://github.com/mvndaemon/mvnd)
+
+### Examples / Setup
+Please look into the [docs](docs/) folder for specific examples. Some examples are listed below: 
+- Example of a base application and a feature release - [Helmfile Based Deployment](docs/HelmfileExample.md)
+- Example of application with hot-reload to running container - [Golang app with hot-reload / CompileDaemon](docs/CompileDaemonExample.md)
+- Example of a SQS Provisioning with helm hooks - [Example SQS Producer Consumer App](docs/SQSConfigfurator.md)
+
 
 ## Design Goals
 ### High Level Goals
@@ -58,7 +64,7 @@ If you are using a loosely typed language like php / python etc, then you can sa
 ## Docs
 
 ### Architecture
-Please refer to the [Architecture Overview](Architecture.md#) for entire details on the devstack architecture.
+Please refer to the [Architecture Overview](docs/Architecture.md) for entire details on the devstack architecture.
 
 ### Examples
 TBD
