@@ -1,0 +1,13 @@
+FROM golang:1.16.8-alpine3.14 as builder
+RUN mkdir /build
+ADD ./example/apps/webapp /build/
+WORKDIR /build
+RUN apk add build-base && go build -a -o crud-webapp .
+#adds compile daemon for hot reloading
+RUN go get github.com/githubnemo/CompileDaemon
+# executable
+EXPOSE 9090
+
+ENTRYPOINT CompileDaemon -log-prefix=false --build="go build -a -o crud-webapp ." --command="./crud-webapp"
+
+CMD [ "./crud-webapp" ]
