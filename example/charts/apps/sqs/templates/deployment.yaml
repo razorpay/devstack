@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{ if .Values.devstack_label }}
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  {{ end }}
+  {{ if .Values.devstack_label }}
+  name: golang-sqs-cli-{{ .Values.devstack_label }}
+  {{ else }}
+  name: golang-sqs-cli
+  {{ end }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{ if .Values.devstack_label }}
+    name: golang-sqs-cli-{{ .Values.devstack_label }}
+    {{ else }}
+    name: golang-sqs-cli
+    {{ end }}
+spec:
+  replicas: {{ .Values.golang_sqs_cli_replicas }}
+  selector:
+    matchLabels:
+      {{ if .Values.devstack_label }}
+      app: golang-sqs-cli-{{ .Values.devstack_label }}
+      {{ else }}
+      app: golang-sqs-cli
+      {{ end }}
+  template:
+    metadata:
+      labels:
+        {{ if .Values.devstack_label }}
+        app: golang-sqs-cli-{{ .Values.devstack_label }}
+        {{ else }}
+        app: golang-sqs-cli
+        {{ end }}
+    spec:
+      automountServiceAccountToken: true
+      containers:
+        - name: golang-sqs-cli
+          imagePullPolicy: IfNotPresent
+          image: example/golang-sqs-cli:{{ .Values.image }}
+          ports:
+            - containerPort: 9090
+          resources:
+            requests:
+              memory: {{ .Values.golang_sqs_cli_requests_memory }}
+              cpu: {{ .Values.golang_sqs_cli_requests_cpu }}
+            limits:
+              memory: {{ .Values.golang_sqs_cli_limits_memory }}
+          command:
+            - ./crud-webapp
+      dnsPolicy: {{ .Values.golang_sqs_cli_dns_policy }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 60
+      nodeSelector:
+        {{ .Values.golang_sqs_cli_nodeselector }}: ""
