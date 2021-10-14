@@ -1,5 +1,5 @@
 # Devstack
-Devstack is Razorpay's Developer Experience Solution for cloud on laptop
+Devstack: Razorpay's cloud native development ecosystem
 
 ## What is Devstack
 At razorpay, we run all our workloads on kubernetes. Like any other mature organization, we have an involved CI/CD practice with extremely sophisticated pipelines.  While this works great for all production and pre-production workloads, we have been noticing over a period of time a bunch of development challenges. 
@@ -8,6 +8,14 @@ Devstack, offers a set of tools to help build and develop code on the individual
 on a cloud environment. 
 
 In a nutshell: **"Its a client based development tool for building cloud native applications on kubernetes"**
+
+## See it in action
+<b>Provisioning Service Fleet</b>
+<img src="images/helmfile.gif"/>
+<br/>
+<b>Hot sync local code to cloud</b>
+<img src="images/devspace.gif"/>
+
 
 ## Presentations and Videos
 - [Devstack Presentation: Slides](https://static.sched.com/hosted_files/osselc21/50/Improving_Developer_Experience_Srinidhi_VV_09292021_v1.pdf)
@@ -78,6 +86,3 @@ Please file an issue on this repo using the following labels: Clarification, Fea
 
 ## Contributing
 Please refer to the [Contribution Guide](https://github.com/razorpay/devstack/blob/master/CONTRIBUTING.md)
-
-## Roadmap
-TBD
