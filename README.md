@@ -2,6 +2,14 @@
 Devstack: Razorpay's cloud native development ecosystem
 
 ## What is Devstack
+* Client only, developer friendly stack for running cloud workloads
+* Ability to define a collection of dependent micro services(service fleet) in a composable fashion
+* Ability to deploy service fleet and associated cloud infrastructure using a single command
+* Build, Test, debug inside kubernetes with hot reloading capability
+* Create unified blueprints for your deployment stack using an ephmeral infrastructure
+* Service Level/Feature Level routing via header propogation
+
+## Why did we build this?
 At razorpay, we run all our workloads on kubernetes. Like any other mature organization, we have an involved CI/CD practice with extremely sophisticated pipelines.  While this works great for all production and pre-production workloads, we have been noticing over a period of time a bunch of development challenges. 
 In essence, the goal is to **Simplify developer workflow and reduce the time taken to rollout features independently**. 
 Devstack, offers a set of tools to help build and develop code on the individual developer's laptop, as if they are working
@@ -19,6 +27,7 @@ In a nutshell: **"Its a client based development tool for building cloud native 
 
 ## Presentations and Videos
 - [Devstack Presentation: Slides](https://static.sched.com/hosted_files/osselc21/50/Improving_Developer_Experience_Srinidhi_VV_09292021_v1.pdf)
+- [Kubecon 2021](https://static.sched.com/hosted_files/kccncna2021/38/Improving_Developer_Experience_Srinidhi_VV_10142021_v1.pdf)
 
 ## Setup And Installation
 ### Pre-Requisites
@@ -74,14 +83,10 @@ Please look into the [docs](docs/) folder for specific examples. Some examples a
 ### Architecture
 Please refer to the [Architecture Overview](docs/Architecture.md) for entire details on the devstack architecture.
 
-### Examples
-TBD
-
 ### Extension
-We have provided a collection of custom helm hooks for AWS and kubernetes specific workloads. All of these are extensible. Please refer to the documentation of the helm hooks(TBD)
+We have provided a collection of custom helm hooks for AWS and kubernetes specific workloads. All of these are extensible. Please refer to the documentation of the helm hooks
 
 ## Need Help
-
 Please file an issue on this repo using the following labels: Clarification, Feature, Bug
 
 ## Contributing
