@@ -46,23 +46,23 @@ can be extended. At any point, whenever a targer service(say example5.com) doesn
 With the above, lets see how the high level architecture for this would look like:
 
 <p align="center">
-  <img src="images/Solution-Overview.png?raw=true" alt="Solution Overview"/>
+  <img src="https://github.com/razorpay/devstack/raw/master/images/Solution-Overview.png" alt="Solution Overview"/>
 </p>
 
 The below visualization shows how routing would look for a class of sample applications with different feature endpoints:
 <p align="center">
-<img src="images/Multi-App-Architecture.png?raw=true" alt="Multi Application Network Architecture" />
+<img src="https://github.com/razorpay/devstack/raw/master/images/Multi-App-Architecture.png" alt="Multi Application Network Architecture" />
 </p>
 
 
 With all the above, overall devstack solution, appears like the following:
 <p align="center">
-<img src="images/Network-Architecture.png?raw=true" alt="DevStack Network Architecture" />
+<img src="https://github.com/razorpay/devstack/raw/master/images/Network-Architecture.png" alt="DevStack Network Architecture" />
 </p>
 
 ## Helmfile Workflow
 The following diagram explains the helmfile worklow along with the custom helm hooks:
 <p align="center">
-<img src="images/Helm-Hooks-Workflow.png?raw=true" alt="Helmfile Workflow" />
+<img src="https://github.com/razorpay/devstack/raw/master/images/Helm-Hooks-Workflow.png" alt="Helmfile Workflow" />
 </p>
 
