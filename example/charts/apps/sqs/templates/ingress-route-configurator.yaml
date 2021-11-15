@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: irc-{{ .Values.devstack_label }}-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    janitor/ttl: "{{ .Values.ttl }}"
+  namespace: ir-configurator
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 0
+  template:
+    metadata:
+      labels:
+        name: irc
+    spec:
+      containers:
+        - env:
+            - name: ACTION
+              value: 'update'
+            - name: HEADERVALUE
+              value: '{{ .Values.devstack_label }}'
+            - name: INGRESSROUTENAME
+              value: 'demo-app'
+            - name: INGRESSURL
+              value: '{{ .Values.golang_sqs_host }}'
+            - name: NAMESPACE
+              value: '{{ .Values.namespace }}'
+            - name: SERVICENAME
+              value: 'golang-sqs-{{ .Values.devstack_label }}'
+            - name: SERVICEPORT
+              value: '80'
+          image: 'razorpay/devstack:irc'
+          imagePullPolicy: Always
+          name: irc
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+      imagePullSecrets:
+        - name: registry
+      nodeSelector:
+        node.kubernetes.io/worker-generic: ''
+      restartPolicy: Never
