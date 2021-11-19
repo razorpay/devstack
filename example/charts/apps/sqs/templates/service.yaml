@@ -24,8 +24,8 @@ spec:
       protocol: TCP
   selector:
     {{ if .Values.devstack_label }}
-    app: golang-sqs-{{ .Values.devstack_label }}
+    name: golang-sqs-{{ .Values.devstack_label }}
     {{ else }}
-    app: golang-sqs
+    name: golang-sqs
     {{ end }}
   type: ClusterIP

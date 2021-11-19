@@ -1,3 +1,4 @@
+{{ if .Values.devstack_label }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -17,16 +18,17 @@ apiVersion: traefik.containo.us/v1alpha1
 metadata:
   annotations:
     janitor/ttl: "{{ .Values.ttl }}"
-  name: golang-gin-crud-{{ .Values.devstack_label }}
+  name: golang-sqs-{{ .Values.devstack_label }}
   namespace: {{ .Values.namespace }}
 spec:
   entryPoints:
     - http
   routes:
     - kind: Rule
-      match: Host(`demo-{{ .Values.devstack_label }}.dev.com`)
+      match: Host(`demo-sqs-{{ .Values.devstack_label }}.dev.com`)
       services:
-        - name: 'golang-gin-crud-{{ .Values.devstack_label }}'
+        - name: 'golang-sqs-{{ .Values.devstack_label }}'
           port: 80
       middlewares:
         - name: injectheader-{{ .Values.devstack_label }}
+{{ end }}

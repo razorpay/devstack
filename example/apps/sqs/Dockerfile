@@ -1,9 +1,9 @@
 FROM golang:1.16.8-alpine3.14 as builder
 RUN mkdir /build
-ADD . /build/
+ADD ./example/apps/webapp /build/
 WORKDIR /build
+RUN go mod download
 RUN apk add build-base && go build -a -o sqs-publisher-consumer .
-
 
 # generate clean, final image for end users
 FROM alpine:3.14

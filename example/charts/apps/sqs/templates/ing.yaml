@@ -13,7 +13,7 @@ spec:
     - http
   routes:
     - kind: Rule
-      match: Host(`{{ .Values.golang_sqs_host}}`)
+      match: Host(`{{ .Values.golang_sqs_cli_host}}`)
       services:
         - name: golang-sqs
           port: 80

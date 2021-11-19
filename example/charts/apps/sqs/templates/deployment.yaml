@@ -6,40 +6,46 @@ metadata:
     janitor/ttl: "{{ .Values.ttl }}"
   {{ end }}
   {{ if .Values.devstack_label }}
-  name: golang-sqs-cli-{{ .Values.devstack_label }}
+  name: golang-sqs-{{ .Values.devstack_label }}
   {{ else }}
-  name: golang-sqs-cli
+  name: golang-sqs
   {{ end }}
   namespace: {{ .Values.namespace }}
   labels:
     {{ if .Values.devstack_label }}
-    name: golang-sqs-cli-{{ .Values.devstack_label }}
+    name: golang-sqs-{{ .Values.devstack_label }}
     {{ else }}
-    name: golang-sqs-cli
+    name: golang-sqs
     {{ end }}
 spec:
   replicas: {{ .Values.golang_sqs_cli_replicas }}
   selector:
     matchLabels:
       {{ if .Values.devstack_label }}
-      app: golang-sqs-cli-{{ .Values.devstack_label }}
+      name: golang-sqs-{{ .Values.devstack_label }}
       {{ else }}
-      app: golang-sqs-cli
+      name: golang-sqs
       {{ end }}
   template:
     metadata:
       labels:
         {{ if .Values.devstack_label }}
-        app: golang-sqs-cli-{{ .Values.devstack_label }}
+        name: golang-sqs-{{ .Values.devstack_label }}
         {{ else }}
-        app: golang-sqs-cli
+        name: golang-sqs
         {{ end }}
     spec:
       automountServiceAccountToken: true
       containers:
-        - name: golang-sqs-cli
+        {{ if .Values.devstack_label }}
+        - env:
+            QUEUE_NAME: welcome-email-queue-{{ .Values.devstack_label }}
+          name: golang-sqs-{{ .Values.devstack_label }}
+        {{ else }}
+        - name: golang-sqs
+        {{ end }}
           imagePullPolicy: IfNotPresent
-          image: example/golang-sqs-cli:{{ .Values.image }}
+          image: razorpay/devstack:{{ .Values.image }}
           ports:
             - containerPort: 9090
           resources:
@@ -50,7 +56,7 @@ spec:
               memory: {{ .Values.golang_sqs_cli_limits_memory }}
           command:
             - ./crud-webapp
-      dnsPolicy: {{ .Values.golang_sqs_cli_dns_policy }}
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}

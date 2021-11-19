@@ -1,0 +1,29 @@
+version: v1beta10
+dev:
+  replacePods:
+    - labelSelector:
+        app: ${APP_NAME}-${DEVSTACK_LABEL}
+      replaceImage: razorpay/devstack:webapp-latest-devstack
+      namespace: ${NAMESPACE}
+  sync:
+    - labelSelector:
+        app: ${APP_NAME}-${DEVSTACK_LABEL}
+      localSubPath: ./
+      containerPath: /build/
+      namespace: ${NAMESPACE}
+      disableDownload: true
+      initialSync: preferLocal
+  logs:
+    showLast: 200
+    sync: true
+    selectors:
+      - labelSelector:
+          app: ${APP_NAME}-${DEVSTACK_LABEL}
+        namespace: ${NAMESPACE}
+vars:
+  - name: DEVSTACK_LABEL
+    value: "awesome-devstack"
+  - name: NAMESPACE
+    value: "demo"
+  - name: APP_NAME
+    value: "golang-gin-crud"
