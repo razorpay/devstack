@@ -27,7 +27,8 @@ In a nutshell: **"Its a client based development tool for building cloud native 
 
 ## Presentations and Videos
 - [Devstack Presentation: Slides](https://static.sched.com/hosted_files/osselc21/50/Improving_Developer_Experience_Srinidhi_VV_09292021_v1.pdf)
-- [Kubecon 2021](https://static.sched.com/hosted_files/kccncna2021/38/Improving_Developer_Experience_Srinidhi_VV_10142021_v1.pdf)
+- [Kubecon 2021 : Slides](https://static.sched.com/hosted_files/kccncna2021/38/Improving_Developer_Experience_Srinidhi_VV_10142021_v1.pdf)
+- [Kubecon 2021 : Talk](https://www.youtube.com/watch?v=f-w5Nh92dt8)
 
 ## Setup And Installation
 ### Pre-Requisites
