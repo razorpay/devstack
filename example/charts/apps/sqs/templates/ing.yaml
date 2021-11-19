@@ -1,0 +1,20 @@
+{{ if not .Values.devstack_label }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  {{ if .Values.devstack_label }}
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  {{ end }}
+  name: demo-app
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - http
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.golang_sqs_cli_host}}`)
+      services:
+        - name: golang-sqs
+          port: 80
+{{ end }}

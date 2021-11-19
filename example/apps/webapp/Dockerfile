@@ -1,7 +1,7 @@
 FROM golang:1.16.8-alpine3.14 as builder
 RUN mkdir /build
-ADD . /build/
 WORKDIR /build
+ADD ./example/apps/webapp /build/
 RUN apk add build-base && go build -a -o crud-webapp .
 
 

@@ -28,8 +28,6 @@ dump.rdb
 # This needs to be sourced from the proto repo.
 proto
 vendor
-.devspace
 
 # Generated protobuf files.
 #rpc/*
-

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{ if .Values.devstack_label }}
+  annotations:
+    janitor/ttl: "{{ .Values.ttl }}"
+  {{ end }}
+  {{ if .Values.devstack_label }}
+  name: golang-sqs-{{ .Values.devstack_label }}
+  {{ else }}
+  name: golang-sqs
+  {{ end }}
+  namespace: '{{ .Values.namespace }}'
+  labels:
+    {{ if .Values.devstack_label }}
+    name: golang-sqs-{{ .Values.devstack_label }}
+    {{ else }}
+    name: golang-sqs
+    {{ end }}
+spec:
+  ports:
+    - port: 80
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    {{ if .Values.devstack_label }}
+    name: golang-sqs-{{ .Values.devstack_label }}
+    {{ else }}
+    name: golang-sqs
+    {{ end }}
+  type: ClusterIP
