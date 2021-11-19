@@ -1,0 +1,8 @@
+* Get all the secrets for the application from kubestash table
+* add it back in the dev specific entry
+
+table - kubestash-stage
+namespace - namespace
+secret_name - secret name
+values
+secret_suffix - the suffix for the secret to be generated (the dev name)

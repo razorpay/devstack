@@ -1,0 +1,8 @@
+action: update=
+namespace: demo
+secretName: demo-webapp
+ttl: 6h
+updateEntries:
+  secret1:
+    key: KEY
+    value: VALUE
