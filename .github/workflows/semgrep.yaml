@@ -1,0 +1,18 @@
+name: Semgrep
+on:
+  pull_request: {}
+  push:
+    branches: ["master"]
+jobs:
+  semgrep:
+    name: Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
+      - uses: returntocorp/semgrep-action@v1
+        with:
+          auditOn: push
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
+          publishDeployment: 339
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
