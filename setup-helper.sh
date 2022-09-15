@@ -182,8 +182,8 @@ welcome() {
 
     printf "$prompt"
 
-    read -n 1
-    [[ $REPLY =~ ^[Yy]$ ]]
+    read
+    [[ -z $REPLY ]]
 
     echo
 }
