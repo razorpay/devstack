@@ -180,8 +180,12 @@ cluster_config() {
 welcome() {
     declare prompt="$1"
 
-    read -p "$prompt" -n 1
+    printf "$prompt"
+
+    read -n 1
     [[ $REPLY =~ ^[Yy]$ ]]
+
+    echo
 }
 
 spinnaker_webhook() {
