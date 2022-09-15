@@ -182,7 +182,6 @@ welcome() {
 
     read -p "$prompt" -n 1
     [[ $REPLY =~ ^[Yy]$ ]]
-    echo
 }
 
 spinnaker_webhook() {
