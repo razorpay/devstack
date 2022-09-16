@@ -209,9 +209,9 @@ oidc_config() {
 setup_tools() {
     add_dir_to_path "\${HOME}/bin" "${HOME}/bin"
     install "brew" "install_brew" "version_brew"
-    install "kubectl" "install_kubectl" "version_kubectl"
+    install "kubectl" "" "version_kubectl"
     install "werf" "install_werf" "version_werf"
-    install "gh" "install_gh"
+    install "gh"
     install "helmfile" "install_helmfile"
     install "devspace" "install_devspace"
     install "python3"
