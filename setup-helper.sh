@@ -90,7 +90,7 @@ install() {
     if [[ -z "$path" ]]; then
         echo "couldn't find $cmdName. installing..."
         if [[ -z "$installCmd" ]]; then
-            brew install "$installCmd"
+            brew install "$cmdName"
         else
             "$installCmd"
         fi
