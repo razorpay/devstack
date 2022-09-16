@@ -1,11 +1,12 @@
-set -e
-set -o pipefail
+set -euo pipefail
 
 DOC="
 Starting setup for devstack
+This expects bash to be available
 Will do the following
 - Print this message and wait for confirmation
-- Install the following tools if not already installed
+- Install the following tools if not already installed.
+  Note: this adds path related commands and aliases to your profile files (.zshrc, .bashrc, ...)
     - brew
     - kubectl (Kubernetes Cli)
     - werf
@@ -21,8 +22,6 @@ Will do the following
 - [Needs VPN] [Spinnaker Pipeline Trigger] Provision access to the kubernetes cluster for your razorpay email
 
 Make sure you're connected to the VPN before continuing.
-
-Continue..? [y/n]
 "
 
 SHELL_TYPE="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
@@ -76,18 +75,18 @@ brew_install_from_url() {
 }
 
 install_devspace() {
-    sourceCommit="eefcf5566171216e59c89a8c9cf88d38b97f4c74"
-    sourceUrl="https://raw.githubusercontent.com/Homebrew/homebrew-core/$sourceCommit/Formula/devspace.rb"
+    declare sourceCommit="eefcf5566171216e59c89a8c9cf88d38b97f4c74"
+    declare sourceUrl="https://raw.githubusercontent.com/Homebrew/homebrew-core/$sourceCommit/Formula/devspace.rb"
     brew_install_from_url "devspace" $sourceUrl
 }
 
 install() {
     declare cmdName="$1"
-    declare installCmd="$2"
-    declare versionCmd="$3"
+    declare installCmd="${2-}"
+    declare versionCmd="${3-}"
 
     echo "looking for $cmdName"
-    path="$(which $cmdName)" || true
+    declare path="$(which $cmdName)" || true
     if [[ -z "$path" ]]; then
         echo "couldn't find $cmdName. installing..."
         if [[ -z "$installCmd" ]]; then
@@ -98,8 +97,9 @@ install() {
     else
         echo "found $cmdName at $path"
     fi
+
     if [[ -z "$versionCmd" ]]; then
-        $cmdName --version
+        "$cmdName" --version
     else
         "$versionCmd"
     fi
@@ -114,13 +114,13 @@ version_brew() {
 }
 
 version_kubectl() {
-    kubectl version --output yaml
+    kubectl version --client --output yaml
 }
 
 install_helmfile() {
-    repo="razorpay/helmfile"
-    tag="v0.144.0-razorpay"
-    file="helmfile_$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m)"
+    declare repo="razorpay/helmfile"
+    declare tag="v0.144.0-razorpay"
+    declare file="helmfile_$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m)"
 
     [[ -f "${HOME}/bin/$file" ]] || gh release download -R $repo $tag -p "$file" -D "${HOME}/bin"
     chmod +x "${HOME}/bin/$file"
@@ -128,7 +128,7 @@ install_helmfile() {
 }
 
 install_werf() {
-    installer="/tmp/werf-install.sh"
+    declare installer="/tmp/werf-install.sh"
     [[ -f "$installer" ]] || curl -sSL https://werf.io/install.sh -o "$installer"
     chmod +x "$installer"
     "$installer" --version 1.2 --channel stable --no-interactive
@@ -179,13 +179,10 @@ cluster_config() {
 
 welcome() {
     declare prompt="$1"
+    
+    read -p "${prompt}Press enter to continue. Press any other key to stop." -n 1
 
-    printf "$prompt"
-
-    read
     [[ -z $REPLY ]]
-
-    echo
 }
 
 spinnaker_webhook() {
@@ -199,12 +196,14 @@ spinnaker_webhook() {
 }
 
 oidc_config() {
-    declare pasteUrl="$1"
-    declare pasteFile="$2"
+    declare email="$1"
+    declare pasteUrl="$2"
+    declare pasteFile="$3"
 
+    oidc_exists "$email" && return 0
     pbincli get "$pasteUrl"
-    k8s-oidc-helper -c ./"$pasteFile" --write
-    rm ./"$pasteFile"
+    k8s-oidc-helper -c "./$pasteFile" --write
+    rm "./$pasteFile"
 }
 
 setup_tools() {
@@ -223,7 +222,7 @@ setup_tools() {
     refresh_shrc_binding
 }
 
-oidcExists() {
+oidc_exists() {
     declare email="$1"
 
     [[ "$email" == $(kubectl config view -o jsonpath="{.users[?(@.name == \"$email\")].name}") ]]
