@@ -227,3 +227,15 @@ oidc_exists() {
 
     [[ "$email" == $(kubectl config view -o jsonpath="{.users[?(@.name == \"$email\")].name}") ]]
 }
+
+
+is_email() {
+    declare input="$1"
+
+    [[ "$input" =~ ^[a-zA-Z0-9.!\#$%\&\'*+/=?^_\`{|}~-]+@razorpay\.com$ ]]
+}
+
+abort() {
+    echo "$1"
+    exit 1
+}
