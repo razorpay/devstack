@@ -210,7 +210,7 @@ setup_tools() {
     add_dir_to_path "\${HOME}/bin" "${HOME}/bin"
     install "brew" "install_brew" "version_brew"
     install "kubectl" "" "version_kubectl"
-    install "werf" "install_werf" "version_werf"
+    # install "werf" "install_werf" "version_werf"
     install "gh"
     install "helmfile" "install_helmfile"
     install "devspace" "install_devspace"
@@ -219,7 +219,7 @@ setup_tools() {
     install "go" "install_go" "version_go"
     add_dir_to_path "\$(go env GOPATH)/bin" "$(go env GOPATH)/bin"
     install "k8s-oidc-helper" "install_oidc_helper"
-    configure_helmfile_for_werf
+    # configure_helmfile_for_werf
     refresh_shrc_binding
 }
 
