@@ -150,7 +150,6 @@ version_pbincli() {
 
 install_go() {
     brew install go
-    add_dir_to_path "\$(go env GOPATH)/bin" "$(go env GOPATH)/bin"
 }
 
 version_go() {
@@ -158,6 +157,7 @@ version_go() {
 }
 
 configure_helmfile_for_werf() {
+    add_cmd_to_shrc "export WERF_HELM3_MODE=1"
     add_cmd_to_shrc "alias helmfile='helmfile -b werf --runner-skip-prefix --runner-log-level=info'"
 }
 
@@ -217,6 +217,7 @@ setup_tools() {
     install "python3"
     install "pbincli" "install_pbincli" "version_pbincli"
     install "go" "install_go" "version_go"
+    add_dir_to_path "\$(go env GOPATH)/bin" "$(go env GOPATH)/bin"
     install "k8s-oidc-helper" "install_oidc_helper"
     configure_helmfile_for_werf
     refresh_shrc_binding
