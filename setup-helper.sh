@@ -1,31 +1,47 @@
 set -euo pipefail
 
 DOC="
-Starting setup for devstack
-This expects bash to be available
-Will do the following
+Starting setup for devstack.
+
+It will do the following:
 - Print this message and wait for confirmation
-- Install the following tools if not already installed.
-  Note: this adds path related commands and aliases to your profile files (.zshrc, .bashrc, ...)
-    - brew
+
+- Install the following tools if not already installed (might make changes to .zshrc/.bashrc/...)
+    - brew (if not available, will need sudo access to install)
     - kubectl (Kubernetes Cli)
     - werf
-    - gh (Github Cli)
-    - helmfile (https://github.com/razorpay/helmfile)
+    - helmfile
     - devspace (v5.18.5 not latest)
     - python3
     - pbincli (cli for privatebin)
     - go
     - k8s-oidc-helper (https://github.com/micahhausler/k8s-oidc-helper)
+
+- Configure these tools with kubernetes cluster info
+
 - [Needs VPN] [OIDC Login] Configure the tools to use your razorpay email to login to the kubernetes cluster
-- Configure the tools with kubernetes cluster info
+
 - [Needs VPN] [Spinnaker Pipeline Trigger] Provision access to the kubernetes cluster for your razorpay email
 
-Make sure you're connected to the VPN before continuing.
+
+Make sure you're connected to the VPN.
+Make sure to take admin access if you don't have homebrew installed (Use razorpay self-serve app)
 "
 
 SHELL_TYPE="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
 SHRC_FILE="${HOME}/.${SHELL_TYPE}rc"
+
+BIN_DIR="${HOME}/.devstack/bin"
+BIN_DIR_EXPR="\${HOME}/.devstack/bin"
+
+GO_BIN_DIR="$(go env GOPATH)/bin"
+GO_BIN_DIR_EXPR="\$(go env GOPATH)/bin"
+
+PYTHON_BIN_DIR="$(python3 -m site --user-base)/bin"
+PYTHON_BIN_DIR_EXPR="\$(python3 -m site --user-base)/bin"
+
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m)"
 
 append_line_to_file() {
     declare line="$1"
@@ -42,12 +58,14 @@ refresh_shrc_binding() {
 
 add_cmd_to_shrc() {
     declare cmd="$1"
+
     grep -qsxF -- "$cmd" "$SHRC_FILE" || append_line_to_file "$cmd" "$SHRC_FILE"
     refresh_shrc_binding
 }
 
 check_path_contains() {
     declare dir="$1"
+
     [[ "$PATH" = *":$dir:"* ]] || [[ "$PATH" = *":$dir" ]] || [[ "$PATH" = "$dir:"* ]]
 }
 
@@ -59,25 +77,21 @@ add_dir_to_path() {
     check_path_contains "$exepectedPathComponent" || add_cmd_to_shrc "$pathAppendCmd"
 }
 
-brew_install_from_url() {
-    declare formula="$1"
-    declare url="$2"
+install_binary() {
+    declare url="$1"
+    declare dir="$2"
+    declare bin="$3"
 
-    # command || true allows us to suppress errors in command
-    brew unpin $formula || true
-    brew uninstall $formula || true
-
-    formulaPath="$(find $(brew --repository)/Library -name $formula.rb)"
-
-    curl $url > $formulaPath && brew reinstall $formula
-
-    pwdBefore=$(pwd) && cd "$(dirname $formulaPath)" && git checkout . && cd "$pwdBefore"
+    curl -L "$url" -o "$dir/$bin"
+    chmod +x "$dir/$bin"
 }
 
 install_devspace() {
-    declare sourceCommit="eefcf5566171216e59c89a8c9cf88d38b97f4c74"
-    declare sourceUrl="https://raw.githubusercontent.com/Homebrew/homebrew-core/$sourceCommit/Formula/devspace.rb"
-    brew_install_from_url "devspace" $sourceUrl
+    declare tag="${OS}-${ARCH}"
+    declare version="v5.18.5"
+    declare url="https://github.com/loft-sh/devspace/releases/download/$version/devspace-$tag"
+
+    install_binary "$url" "${BIN_DIR}" "devspace"
 }
 
 install() {
@@ -90,6 +104,7 @@ install() {
     if [[ -z "$path" ]]; then
         echo "couldn't find $cmdName. installing..."
         if [[ -z "$installCmd" ]]; then
+            # default for installation
             brew install "$cmdName"
         else
             "$installCmd"
@@ -99,6 +114,7 @@ install() {
     fi
 
     if [[ -z "$versionCmd" ]]; then
+        # default for version check
         "$cmdName" --version
     else
         "$versionCmd"
@@ -117,23 +133,12 @@ version_kubectl() {
     kubectl version --client --output yaml
 }
 
-install_helmfile() {
-    declare repo="razorpay/helmfile"
-    declare tag="v0.144.0-razorpay"
-    declare file="helmfile_$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m)"
-
-    [[ -f "${HOME}/bin/$file" ]] || gh release download -R $repo $tag -p "$file" -D "${HOME}/bin"
-    chmod +x "${HOME}/bin/$file"
-    ln -s "${HOME}/bin/$file" "${HOME}/bin/helmfile"
-}
-
 install_werf() {
-    declare installer="/tmp/werf-install.sh"
-    [[ -f "$installer" ]] || curl -sSL https://werf.io/install.sh -o "$installer"
-    chmod +x "$installer"
-    "$installer" --version 1.2 --channel stable --no-interactive
-    source "$($HOME/bin/trdl use werf 1.2 stable)"
-    rm "$installer"
+    declare tag="${OS}-${ARCH}"
+    declare version="1.2.174"
+    declare url="https://tuf.werf.io/targets/releases/$version/$tag/bin/werf"
+
+    install_binary "$url" "${BIN_DIR}" "werf"
 }
 
 version_werf() {
@@ -148,17 +153,13 @@ version_pbincli() {
     pbincli --help
 }
 
-install_go() {
-    brew install go
-}
-
 version_go() {
     go version
 }
 
 configure_helmfile_for_werf() {
     add_cmd_to_shrc "export WERF_HELM3_MODE=1"
-    add_cmd_to_shrc "alias helmfile='helmfile -b werf --runner-skip-prefix --runner-log-level=info'"
+    add_cmd_to_shrc "alias helmfile='helmfile --enable-live-output -b werf'"
 }
 
 install_oidc_helper() {
@@ -177,7 +178,7 @@ cluster_config() {
     echo "kubectl config current-context : $(kubectl config current-context)"
 }
 
-welcome() {
+confirm() {
     declare prompt="$1"
     
     read -p "${prompt}Press enter to continue. Press any other key to stop." -n 1
@@ -207,36 +208,50 @@ oidc_config() {
 }
 
 setup_tools() {
-    add_dir_to_path "\${HOME}/bin" "${HOME}/bin"
     install "brew" "install_brew" "version_brew"
     install "kubectl" "" "version_kubectl"
-    # install "werf" "install_werf" "version_werf"
-    install "gh"
-    install "helmfile" "install_helmfile"
+    install "helmfile"
+
+    add_dir_to_path "${BIN_DIR_EXPR}" "${BIN_DIR}"
+    install "werf" "install_werf" "version_werf"
     install "devspace" "install_devspace"
+
+    configure_helmfile_for_werf
+
     install "python3"
+    add_dir_to_path "${PYTHON_BIN_DIR_EXPR}" "${PYTHON_BIN_DIR}"
+
+    install "go" "" "version_go"
+    add_dir_to_path "${GO_BIN_DIR_EXPR}" "${GO_BIN_DIR}"
+
     install "pbincli" "install_pbincli" "version_pbincli"
-    install "go" "install_go" "version_go"
-    add_dir_to_path "\$(go env GOPATH)/bin" "$(go env GOPATH)/bin"
     install "k8s-oidc-helper" "install_oidc_helper"
-    # configure_helmfile_for_werf
-    refresh_shrc_binding
 }
 
 oidc_exists() {
     declare email="$1"
 
-    [[ "$email" == $(kubectl config view -o jsonpath="{.users[?(@.name == \"$email\")].name}") ]]
+    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"$email\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
+
+    [[ $(kubectl config view -o=go-template --template="$template") == 1 ]]
 }
 
-
-is_email() {
+is_rzp_email() {
     declare input="$1"
 
     [[ "$input" =~ ^[a-zA-Z0-9.!\#$%\&\'*+/=?^_\`{|}~-]+@razorpay\.com$ ]]
 }
 
 abort() {
-    echo "$1"
+    declare message="$1"
+
+    echo "$message"
     exit 1
+}
+
+read_email() {
+    declare target="$1"
+
+    read -p "Enter your (razorpay) email address:" "$target"
+    is_rzp_email ${!target} || abort "Not a valid razorpay email address"
 }
