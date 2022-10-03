@@ -1,5 +1,3 @@
-set -euo pipefail
-
 DOC="
 Starting setup for devstack.
 
