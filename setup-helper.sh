@@ -34,12 +34,6 @@ SHRC_FILE="${HOME}/.${SHELL_TYPE}rc"
 BIN_DIR="${HOME}/.devstack/bin"
 BIN_DIR_EXPR="\${HOME}/.devstack/bin"
 
-GO_BIN_DIR="$(go env GOPATH)/bin"
-GO_BIN_DIR_EXPR="\$(go env GOPATH)/bin"
-
-PYTHON_BIN_DIR="$(python3 -m site --user-base)/bin"
-PYTHON_BIN_DIR_EXPR="\$(python3 -m site --user-base)/bin"
-
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 
@@ -235,6 +229,20 @@ oidc_config() {
     rm "./$pasteFile"
 }
 
+setup_go_bin() {
+    declare goBinDir="$(go env GOPATH)/bin"
+    declare goBinDirExpr="\$(go env GOPATH)/bin"
+
+    add_dir_to_path "$goBinDir" "$goBinDirExpr"
+}
+
+setup_python_bin() {
+    declare pythonBinDir="$(python3 -m site --user-base)/bin"
+    declare pythonBinDirExpr="\$(python3 -m site --user-base)/bin"
+
+    add_dir_to_path "$pythonBinDir" "$pythonBinDirExpr"
+}
+
 setup_tools() {
     install "brew" "install_brew" "version_brew"
     install "kubectl" "" "version_kubectl"
@@ -247,10 +255,10 @@ setup_tools() {
     configure_helmfile_for_werf
 
     install "python3"
-    add_dir_to_path "${PYTHON_BIN_DIR_EXPR}" "${PYTHON_BIN_DIR}"
+    setup_python_bin
 
     install "go" "" "version_go"
-    add_dir_to_path "${GO_BIN_DIR_EXPR}" "${GO_BIN_DIR}"
+    setup_go_bin
 
     install "pbincli" "install_pbincli" "version_pbincli"
     install "k8s-oidc-helper" "install_oidc_helper"
