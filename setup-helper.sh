@@ -86,14 +86,6 @@ install_binary() {
     chmod +x "$dir/$bin"
 }
 
-install_devspace() {
-    declare tag="${OS}-${ARCH}"
-    declare version="v5.18.5"
-    declare url="https://github.com/loft-sh/devspace/releases/download/$version/devspace-$tag"
-
-    install_binary "$url" "${BIN_DIR}" "devspace"
-}
-
 install() {
     declare cmdName="$1"
     declare installCmd="${2-}"
@@ -119,6 +111,60 @@ install() {
     else
         "$versionCmd"
     fi
+}
+
+abort() {
+    declare message="$1"
+
+    echo "$message"
+    exit 1
+}
+
+read_email() {
+    declare target="$1"
+
+    read -p "Enter your (razorpay) email address:" "$target"
+    is_rzp_email ${!target} || abort "Not a valid razorpay email address"
+}
+
+confirm() {
+    declare prompt="$1"
+    
+    read -p "${prompt}Press enter to continue. Press any other key to stop." -n 1
+
+    [[ -z $REPLY ]]
+}
+
+spinnaker_webhook() {
+    declare spinnaker="$1"
+    declare webhook="$2"
+    declare parameters="$3"
+
+    curl -X POST "https://$spinnaker/webhooks/webhook/$webhook" \
+        -H "content-type: application/json" \
+        -d "{\"parameters\":$parameters}"
+}
+
+is_rzp_email() {
+    declare input="$1"
+
+    [[ "$input" =~ ^[a-zA-Z0-9.!\#$%\&\'*+/=?^_\`{|}~-]+@razorpay\.com$ ]]
+}
+
+oidc_exists() {
+    declare email="$1"
+
+    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"$email\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
+
+    [[ $(kubectl config view -o=go-template --template="$template") == 1 ]]
+}
+
+install_devspace() {
+    declare tag="${OS}-${ARCH}"
+    declare version="v5.18.5"
+    declare url="https://github.com/loft-sh/devspace/releases/download/$version/devspace-$tag"
+
+    install_binary "$url" "${BIN_DIR}" "devspace"
 }
 
 install_brew() {
@@ -178,24 +224,6 @@ cluster_config() {
     echo "kubectl config current-context : $(kubectl config current-context)"
 }
 
-confirm() {
-    declare prompt="$1"
-    
-    read -p "${prompt}Press enter to continue. Press any other key to stop." -n 1
-
-    [[ -z $REPLY ]]
-}
-
-spinnaker_webhook() {
-    declare spinnaker="$1"
-    declare webhook="$2"
-    declare parameters="$3"
-
-    curl -X POST "https://$spinnaker/webhooks/webhook/$webhook" \
-        -H "content-type: application/json" \
-        -d "{\"parameters\":$parameters}"
-}
-
 oidc_config() {
     declare email="$1"
     declare pasteUrl="$2"
@@ -226,32 +254,4 @@ setup_tools() {
 
     install "pbincli" "install_pbincli" "version_pbincli"
     install "k8s-oidc-helper" "install_oidc_helper"
-}
-
-oidc_exists() {
-    declare email="$1"
-
-    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"$email\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
-
-    [[ $(kubectl config view -o=go-template --template="$template") == 1 ]]
-}
-
-is_rzp_email() {
-    declare input="$1"
-
-    [[ "$input" =~ ^[a-zA-Z0-9.!\#$%\&\'*+/=?^_\`{|}~-]+@razorpay\.com$ ]]
-}
-
-abort() {
-    declare message="$1"
-
-    echo "$message"
-    exit 1
-}
-
-read_email() {
-    declare target="$1"
-
-    read -p "Enter your (razorpay) email address:" "$target"
-    is_rzp_email ${!target} || abort "Not a valid razorpay email address"
 }
