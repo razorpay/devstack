@@ -163,6 +163,7 @@ install_devspace() {
 
 install_brew() {
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    add_cmd_to_shrc 'eval "$(/opt/homebrew/bin/brew shellenv)"'
 }
 
 version_brew() {
