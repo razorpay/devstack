@@ -23,7 +23,9 @@ It will do the following:
 
 
 Make sure you're connected to the VPN.
-Make sure to take admin access if you don't have homebrew installed (Use razorpay self-serve app)
+
+If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
+use razorpay self-serve app to make yourself admin before running this script again.
 "
 
 SHELL_TYPE="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
@@ -161,7 +163,7 @@ install_devspace() {
 }
 
 install_brew() {
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    /bin/bash -e -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     add_cmd_to_shrc 'eval "$(/opt/homebrew/bin/brew shellenv)"'
 }
 
