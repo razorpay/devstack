@@ -74,7 +74,8 @@ install_binary() {
     declare dir="$2"
     declare bin="$3"
 
-    curl -L "$url" -o "$dir/$bin"
+    mkdir -p "$dir"
+    curl -L "$url" > "$dir/$bin"
     chmod +x "$dir/$bin"
 }
 
