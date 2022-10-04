@@ -21,10 +21,7 @@ It will do the following:
 
 - [Needs VPN] [Spinnaker Pipeline Trigger] Provision access to the kubernetes cluster for your razorpay email
 
-
-Make sure you're connected to the VPN.
-
-If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
+NOTE: If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
 use razorpay self-serve app to make yourself admin before running this script again.
 "
 
@@ -36,6 +33,15 @@ BIN_DIR_EXPR="\${HOME}/.devstack/bin"
 
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
+
+test_private_connection() {
+    declare url="$1"
+
+    declare status=$(curl -s -I -o /dev/null -w '%{http_code}' --connect-timeout 10 "$url")
+    declare errMsg="Please check if you're connected to VPN and $url is reachable in browser"
+
+    [[ $status > 199 && $status < 400 ]] || abort "$errMsg"
+}
 
 append_line_to_file() {
     declare line="$1"
