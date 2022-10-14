@@ -260,6 +260,8 @@ setup_tools() {
     install "werf" "install_werf" "version_werf"
     install "devspace" "install_devspace"
 
+    # updates the helmfile version to the latest
+    brew install helmfile
     configure_helmfile_for_werf
 
     install "python3"
