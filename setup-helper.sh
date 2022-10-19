@@ -25,8 +25,7 @@ NOTE: If you don't have homebrew installed (i.e. running brew --version gives 'c
 use razorpay self-serve app to make yourself admin before running this script again.
 "
 
-SHELL_TYPE="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
-SHRC_FILE="${HOME}/.${SHELL_TYPE}rc"
+DEV_SHRC_FILE="${HOME}/.devstack/shrc"
 
 BIN_DIR="${HOME}/.devstack/bin"
 BIN_DIR_EXPR="\${HOME}/.devstack/bin"
@@ -43,24 +42,37 @@ test_private_connection() {
     [[ $status > 199 && $status < 400 ]] || abort "$errMsg"
 }
 
+add_dev_shrc_to_user_shrc() {
+    declare shellType="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
+    declare userShrcFile="${HOME}/.${shellType}rc"
+
+    declare sourceCmd="source $DEV_SHRC_FILE"
+
+    idempotent_file_append "$sourceCmd" "$userShrcFile"
+}
+
 append_line_to_file() {
     declare line="$1"
     declare file="$2"
 
+    mkdir -p "$(dirname $file)"
     [[ -e $file ]] || touch "$file"
 
     echo "$line" >> "$file"
 }
 
-refresh_shrc_binding() {
-    source "$SHRC_FILE"
+idempotent_file_append() {
+    declare line="$1"
+    declare file="$2"
+
+    grep -qsxF -- "$line" "$file" || append_line_to_file "$line" "$file"
 }
 
 add_cmd_to_shrc() {
     declare cmd="$1"
 
-    grep -qsxF -- "$cmd" "$SHRC_FILE" || append_line_to_file "$cmd" "$SHRC_FILE"
-    refresh_shrc_binding
+    idempotent_file_append "$cmd" "$DEV_SHRC_FILE"
+    source "$DEV_SHRC_FILE"
 }
 
 check_path_contains() {
@@ -272,4 +284,6 @@ setup_tools() {
 
     install "pbincli" "install_pbincli" "version_pbincli"
     install "k8s-oidc-helper" "install_oidc_helper"
+
+    add_dev_shrc_to_user_shrc
 }
