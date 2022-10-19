@@ -287,3 +287,5 @@ setup_tools() {
 
     add_dev_shrc_to_user_shrc
 }
+
+setup_tools
