@@ -210,25 +210,13 @@ version_werf() {
     echo "werf version: $(werf version)"
 }
 
-install_pbincli() {
-    pip3 install pbincli
-}
-
-version_pbincli() {
-    pbincli --help
-}
-
-version_go() {
-    go version
-}
-
 configure_helmfile_for_werf() {
     add_cmd_to_shrc "export WERF_HELM3_MODE=1"
     add_cmd_to_shrc "alias helmfile='helmfile --enable-live-output -b werf'"
 }
 
-install_oidc_helper() {
-    go install github.com/micahhausler/k8s-oidc-helper@latest
+install_kubelogin() {
+    brew install int128/kubelogin/kubelogin
 }
 
 cluster_config() {
@@ -249,27 +237,20 @@ cluster_config() {
 
 oidc_config() {
     declare email="$1"
-    declare pasteUrl="$2"
-    declare pasteFile="$3"
+    declare oidcIssuerUrl="$2"
+    declare oidcClientId="$3"
+    declare oidcClientSecret="$4"
 
     oidc_exists "$email" && return 0
-    pbincli get "$pasteUrl"
-    k8s-oidc-helper -c "./${pasteFile}" --write
-    rm "./${pasteFile}"
-}
 
-setup_go_bin() {
-    declare goBinDir="$(go env GOPATH)/bin"
-    declare goBinDirExpr="\$(go env GOPATH)/bin"
-
-    add_dir_to_path "$goBinDir" "$goBinDirExpr"
-}
-
-setup_python_bin() {
-    declare pythonBinDir="$(python3 -m site --user-base)/bin"
-    declare pythonBinDirExpr="\$(python3 -m site --user-base)/bin"
-
-    add_dir_to_path "$pythonBinDir" "$pythonBinDirExpr"
+    kubectl config set-credentials "$email" \
+        --exec-api-version=client.authentication.k8s.io/v1beta1 \
+        --exec-command=kubectl \
+        --exec-arg=oidc-login \
+        --exec-arg=get-token \
+        --exec-arg=--oidc-issuer-url="$oidcIssuerUrl" \
+        --exec-arg=--oidc-client-id="$oidcClientId" \
+        --exec-arg=--oidc-client-secret="$oidcClientSecret"
 }
 
 setup_tools() {
@@ -285,14 +266,7 @@ setup_tools() {
     brew install helmfile
     configure_helmfile_for_werf
 
-    install "python3"
-    setup_python_bin
-
-    install "go" "" "version_go"
-    setup_go_bin
-
-    install "pbincli" "install_pbincli" "version_pbincli"
-    install "k8s-oidc-helper" "install_oidc_helper"
+    install "kubelogin" "install_kubelogin"
 
     add_dev_shrc_to_user_shrc
 }
@@ -303,27 +277,23 @@ setup_tools_only() {
 }
 
 e2e() {
-    declare pasteHost="$1"
-    declare pasteId="$2"
-    declare pastePassphrase="$3"
-    declare pasteFile="$4"
-    declare contextName="$5"
-    declare clusterName="$6"
-    declare clusterUrl="$7"
-    declare cadata="$8"
-    declare spinnakerHost="$9"
-    declare accessWebhook="${10}"
-
-    declare pasteUrl="https://${pasteHost}/?${pasteId}#${pastePassphrase}"
+    declare oidcIssuerUrl="$1"
+    declare oidcClientId="$2"
+    declare oidcClientSecret="$3"
+    declare contextName="$4"
+    declare clusterName="$5"
+    declare clusterUrl="$6"
+    declare cadata="$7"
+    declare spinnakerHost="$8"
+    declare accessWebhook="$9"
     
     confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
 
-    test_private_connection "https://${pasteHost}"
     read_email email
 
     setup_tools
 
-    oidc_config "$email" "$pasteUrl" "$pasteFile"
+    oidc_config "$email" "$oidcIssuerUrl" "$oidcClientId" "$oidcClientSecret"
     cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
     spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
 }
