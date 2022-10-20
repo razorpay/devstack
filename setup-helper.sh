@@ -44,7 +44,7 @@ test_private_connection() {
 
     echo "Checking if ${url} is reachable..."
 
-    [[ $status > 199 && $status < 400 ]] || abort "$errMsg"
+    [[ $status > 199 && $status < 400 ]] && echo 'ok' || abort "$errMsg"
 }
 
 add_dev_shrc_to_user_shrc() {
