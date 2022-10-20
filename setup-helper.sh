@@ -7,25 +7,18 @@ DOC_TOOLS="
 - Install the following tools if not already installed (might make changes to .zshrc/.bashrc/...)
     - brew (if not available, will need sudo access to install)
     - kubectl (Kubernetes Cli)
-    - werf
     - helmfile
+    - werf
     - devspace (v5.18.5 not latest)
-    - python3
-    - pbincli (cli for privatebin)
-    - go
-    - k8s-oidc-helper (https://github.com/micahhausler/k8s-oidc-helper)
+    - kubelogin (int128/kubelogin/kubelogin)
 
-    NOTE: If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
-    use razorpay self-serve app to make yourself admin before running this script again.
+    NOTE: If you don't have brew (homebrew) installed (i.e. running brew --version gives 'command not found'), use razorpay self-serve app to make yourself admin before running this script again.
 "
 
 DOC_ACCESS="
 - Configure these tools with kubernetes cluster info
-
-- [Needs VPN] [OIDC Login] Configure the tools to use your razorpay email to login to the kubernetes cluster
-
+- Configure these tools to use your razorpay email to login to the kubernetes cluster
 - [Needs VPN] [Spinnaker Pipeline Trigger] Provision access to the kubernetes cluster for your razorpay email
-
 "
 
 DEV_SHRC_FILE="${HOME}/.devstack/shrc"
@@ -290,6 +283,7 @@ e2e() {
     
     confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
 
+    test_private_connection "https://${spinnakerHost}"
     read_email email
 
     setup_tools
