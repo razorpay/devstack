@@ -265,9 +265,14 @@ setup_tools() {
     add_dev_shrc_to_user_shrc
 }
 
+final() {
+    echo "Remember to open new terminal for these commands to be available"
+}
+
 setup_tools_only() {
     confirm "Starting setup for devstack tools:${DOC_BASE}${DOC_TOOLS}"
     setup_tools
+    final
 }
 
 e2e() {
@@ -291,4 +296,6 @@ e2e() {
     oidc_config "$email" "$oidcIssuerUrl" "$oidcClientId" "$oidcClientSecret"
     cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
     spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
+    
+    final
 }
