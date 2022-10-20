@@ -32,10 +32,10 @@ ARCH="$(uname -m)"
 test_private_connection() {
     declare url="$1"
 
+    echo "Checking if ${url} is reachable..."
+
     declare status=$(curl -s -I -o /dev/null -w '%{http_code}' --connect-timeout 10 "$url")
     declare errMsg="Please check if you're connected to VPN and ${url} is reachable in browser"
-
-    echo "Checking if ${url} is reachable..."
 
     [[ $status > 199 && $status < 400 ]] && echo 'ok' || abort "$errMsg"
 }
