@@ -250,7 +250,8 @@ oidc_config() {
         --exec-arg=get-token \
         --exec-arg=--oidc-issuer-url="$oidcIssuerUrl" \
         --exec-arg=--oidc-client-id="$oidcClientId" \
-        --exec-arg=--oidc-client-secret="$oidcClientSecret"
+        --exec-arg=--oidc-client-secret="$oidcClientSecret" \
+        --exec-arg=--oidc-extra-scope=email
 }
 
 setup_tools() {
