@@ -230,13 +230,17 @@ install_oidc_helper() {
 }
 
 cluster_config() {
-    declare name="$1"
-    declare server="$2"
-    declare user="$3"
+    declare contextName="$1"
+    declare clusterName="$2"
+    declare server="$3"
+    declare cadata="$4"
+    declare user="$5"
 
-    kubectl config set-cluster "$name" --server="$server" --insecure-skip-tls-verify=true
-    kubectl config set-context "$name" --cluster="$name" --user="$user"
-    kubectl config use-context "$name"
+    kubectl config set-cluster "$clusterName" --server="$server"
+    kubectl config set "clusters.${clusterName}.certificate-authority-data" "$cadata"
+
+    kubectl config set-context "$contextName" --cluster="$clusterName" --user="$user"
+    kubectl config use-context "$contextName"
 
     echo "kubectl config current-context : $(kubectl config current-context)"
 }
@@ -301,10 +305,12 @@ e2e() {
     declare pasteId="$2"
     declare pastePassphrase="$3"
     declare pasteFile="$4"
-    declare clusterName="$5"
-    declare clusterUrl="$6"
-    declare spinnakerHost="$7"
-    declare accessWebhook="$8"
+    declare contextName="$5"
+    declare clusterName="$6"
+    declare clusterUrl="$7"
+    declare cadata="$8"
+    declare spinnakerHost="$9"
+    declare accessWebhook="${10}"
 
     declare pasteUrl="https://${pasteHost}/?${pasteId}#${pastePassphrase}"
     
@@ -316,6 +322,6 @@ e2e() {
     setup_tools
 
     oidc_config "$email" "$pasteUrl" "$pasteFile"
-    cluster_config "$clusterName" "$clusterUrl" "$email"
+    cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
     spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
 }
