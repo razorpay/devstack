@@ -1,9 +1,9 @@
-DOC="
-Starting setup for devstack.
-
+DOC_BASE="
 It will do the following:
 - Print this message and wait for confirmation
+"
 
+DOC_TOOLS="
 - Install the following tools if not already installed (might make changes to .zshrc/.bashrc/...)
     - brew (if not available, will need sudo access to install)
     - kubectl (Kubernetes Cli)
@@ -15,14 +15,17 @@ It will do the following:
     - go
     - k8s-oidc-helper (https://github.com/micahhausler/k8s-oidc-helper)
 
+    NOTE: If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
+    use razorpay self-serve app to make yourself admin before running this script again.
+"
+
+DOC_ACCESS="
 - Configure these tools with kubernetes cluster info
 
 - [Needs VPN] [OIDC Login] Configure the tools to use your razorpay email to login to the kubernetes cluster
 
 - [Needs VPN] [Spinnaker Pipeline Trigger] Provision access to the kubernetes cluster for your razorpay email
 
-NOTE: If you don't have homebrew installed (i.e. running brew --version gives 'command not found'),
-use razorpay self-serve app to make yourself admin before running this script again.
 "
 
 DEV_SHRC_FILE="${HOME}/.devstack/shrc"
@@ -37,7 +40,7 @@ test_private_connection() {
     declare url="$1"
 
     declare status=$(curl -s -I -o /dev/null -w '%{http_code}' --connect-timeout 10 "$url")
-    declare errMsg="Please check if you're connected to VPN and $url is reachable in browser"
+    declare errMsg="Please check if you're connected to VPN and ${url} is reachable in browser"
 
     [[ $status > 199 && $status < 400 ]] || abort "$errMsg"
 }
@@ -46,7 +49,7 @@ add_dev_shrc_to_user_shrc() {
     declare shellType="$(printf '%s' "$SHELL" | rev | cut -d'/' -f1 | rev)"
     declare userShrcFile="${HOME}/.${shellType}rc"
 
-    declare sourceCmd="source $DEV_SHRC_FILE"
+    declare sourceCmd="source ${DEV_SHRC_FILE}"
 
     idempotent_file_append "$sourceCmd" "$userShrcFile"
 }
@@ -78,7 +81,7 @@ add_cmd_to_shrc() {
 check_path_contains() {
     declare dir="$1"
 
-    [[ "$PATH" = *":$dir:"* ]] || [[ "$PATH" = *":$dir" ]] || [[ "$PATH" = "$dir:"* ]]
+    [[ "$PATH" = *":${dir}:"* ]] || [[ "$PATH" = *":${dir}" ]] || [[ "$PATH" = "${dir}:"* ]]
 }
 
 add_dir_to_path() {
@@ -95,8 +98,8 @@ install_binary() {
     declare bin="$3"
 
     mkdir -p "$dir"
-    curl -L "$url" > "$dir/$bin"
-    chmod +x "$dir/$bin"
+    curl -L "$url" > "${dir}/${bin}"
+    chmod +x "${dir}/${bin}"
 }
 
 install() {
@@ -104,10 +107,10 @@ install() {
     declare installCmd="${2-}"
     declare versionCmd="${3-}"
 
-    echo "looking for $cmdName"
+    echo "looking for ${cmdName}"
     declare path="$(which $cmdName)" || true
     if [[ -z "$path" ]]; then
-        echo "couldn't find $cmdName. installing..."
+        echo "couldn't find ${cmdName}. installing..."
         if [[ -z "$installCmd" ]]; then
             # default for installation
             brew install "$cmdName"
@@ -115,7 +118,7 @@ install() {
             "$installCmd"
         fi
     else
-        echo "found $cmdName at $path"
+        echo "found ${cmdName} at ${path}"
     fi
 
     if [[ -z "$versionCmd" ]]; then
@@ -153,9 +156,9 @@ spinnaker_webhook() {
     declare webhook="$2"
     declare parameters="$3"
 
-    curl -X POST "https://$spinnaker/webhooks/webhook/$webhook" \
+    curl -X POST "https://${spinnaker}/webhooks/webhook/${webhook}" \
         -H "content-type: application/json" \
-        -d "{\"parameters\":$parameters}"
+        -d "{\"parameters\":${parameters}}"
 }
 
 is_rzp_email() {
@@ -167,15 +170,15 @@ is_rzp_email() {
 oidc_exists() {
     declare email="$1"
 
-    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"$email\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
+    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"${email}\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
 
-    [[ $(kubectl config view -o=go-template --template="$template") == 1 ]]
+    [[ $(kubectl config view -o=go-template --template="${template}") == 1 ]]
 }
 
 install_devspace() {
     declare tag="${OS}-${ARCH}"
     declare version="v5.18.5"
-    declare url="https://github.com/loft-sh/devspace/releases/download/$version/devspace-$tag"
+    declare url="https://github.com/loft-sh/devspace/releases/download/${version}/devspace-${tag}"
 
     install_binary "$url" "${BIN_DIR}" "devspace"
 }
@@ -196,7 +199,7 @@ version_kubectl() {
 install_werf() {
     declare tag="${OS}-${ARCH}"
     declare version="1.2.174"
-    declare url="https://tuf.werf.io/targets/releases/$version/$tag/bin/werf"
+    declare url="https://tuf.werf.io/targets/releases/${version}/${tag}/bin/werf"
 
     install_binary "$url" "${BIN_DIR}" "werf"
 }
@@ -231,7 +234,7 @@ cluster_config() {
     declare server="$2"
     declare user="$3"
 
-    kubectl config set-cluster "$name" --server=$server --insecure-skip-tls-verify=true
+    kubectl config set-cluster "$name" --server="$server" --insecure-skip-tls-verify=true
     kubectl config set-context "$name" --cluster="$name" --user="$user"
     kubectl config use-context "$name"
 
@@ -245,8 +248,8 @@ oidc_config() {
 
     oidc_exists "$email" && return 0
     pbincli get "$pasteUrl"
-    k8s-oidc-helper -c "./$pasteFile" --write
-    rm "./$pasteFile"
+    k8s-oidc-helper -c "./${pasteFile}" --write
+    rm "./${pasteFile}"
 }
 
 setup_go_bin() {
@@ -288,4 +291,31 @@ setup_tools() {
     add_dev_shrc_to_user_shrc
 }
 
-setup_tools
+setup_tools_only() {
+    confirm "Starting setup for devstack tools:${DOC_BASE}${DOC_TOOLS}"
+    setup_tools
+}
+
+e2e() {
+    declare pasteHost="$1"
+    declare pasteId="$2"
+    declare pastePassphrase="$3"
+    declare pasteFile="$4"
+    declare clusterName="$5"
+    declare clusterUrl="$6"
+    declare spinnakerHost="$7"
+    declare accessWebhook="$8"
+
+    declare pasteUrl="https://${pasteHost}/?${pasteId}#${pastePassphrase}"
+    
+    confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
+
+    test_private_connection "https://${pasteHost}"
+    read_email email
+
+    setup_tools
+
+    oidc_config "$email" "$pasteUrl" "$pasteFile"
+    cluster_config "$clusterName" "$clusterUrl" "$email"
+    spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
+}
