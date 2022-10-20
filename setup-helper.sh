@@ -266,7 +266,7 @@ setup_tools() {
 }
 
 final() {
-    echo "Remember to open new terminal for these commands to be available"
+    echo "Done. Now, remember to open new terminal for these commands to be available"
 }
 
 setup_tools_only() {
@@ -296,6 +296,6 @@ e2e() {
     oidc_config "$email" "$oidcIssuerUrl" "$oidcClientId" "$oidcClientSecret"
     cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
     spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
-    
+
     final
 }
