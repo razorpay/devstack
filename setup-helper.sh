@@ -28,6 +28,10 @@ BIN_DIR_EXPR="\${HOME}/.devstack/bin"
 
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
+case "$ARCH" in
+    i?86) ARCH="386" ;;
+    x86_64) ARCH="amd64" ;;
+esac
 
 test_private_connection() {
     declare url="$1"
