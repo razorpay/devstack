@@ -241,7 +241,7 @@ oidc_config() {
     oidc_exists "$email" && return 0
 
     kubectl config set-credentials "$email" \
-        --exec-api-version=client.authentication.k8s.io/v1beta1 \
+        --exec-api-version=client.authentication.k8s.io/v1 \
         --exec-command=kubectl \
         --exec-arg=oidc-login \
         --exec-arg=get-token \
