@@ -23,11 +23,10 @@ releases:
       - image: latest
       - devstack_label: {{ .Values.devstack_label }}
       - ttl: {{ .Values.ttl }}
-- name: golang-sqs-cli-{{ .Values.devstack_label }}
-  namespace: demo
-  chart: ../charts/apps/sqs
-  values:
-    - image: latest
-    - devstack_label: {{ .Values.devstack_label }}
-    - ttl: {{ .Values.ttl }}
-
+  - name: golang-sqs-cli-{{ .Values.devstack_label }}
+    namespace: demo
+    chart: ../charts/apps/sqs
+    values:
+      - image: latest
+      - devstack_label: {{ .Values.devstack_label }}
+      - ttl: {{ .Values.ttl }}
