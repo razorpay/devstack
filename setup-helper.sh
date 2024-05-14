@@ -213,7 +213,7 @@ configure_helmfile_for_werf() {
 }
 
 install_kubelogin() {
-    brew install int128/kubelogin/kubelogin
+    brew install Azure/kubelogin/kubelogin
 }
 
 cluster_config() {
@@ -233,22 +233,19 @@ cluster_config() {
 }
 
 oidc_config() {
-    declare email="$1"
-    declare oidcIssuerUrl="$2"
-    declare oidcClientId="$3"
-    declare oidcClientSecret="$4"
+    declare serverId="$1"
+    declare clientId="$2"
+    declare tenantId="$3"
 
     oidc_exists "$email" && return 0
 
-    kubectl config set-credentials "$email" \
+    kubectl config set-credentials azure_oidc \
         --exec-api-version=client.authentication.k8s.io/v1beta1 \
-        --exec-command=kubectl \
-        --exec-arg=oidc-login \
+        --exec-command=kubelogin \
         --exec-arg=get-token \
-        --exec-arg=--oidc-issuer-url="$oidcIssuerUrl" \
-        --exec-arg=--oidc-client-id="$oidcClientId" \
-        --exec-arg=--oidc-client-secret="$oidcClientSecret" \
-        --exec-arg=--oidc-extra-scope=email
+        --exec-arg=--server-id="$serverId" \
+        --exec-arg=--client-id="$clientId" \
+        --exec-arg=--tenant-id="$tenantId"
 }
 
 setup_tools() {
@@ -280,16 +277,16 @@ setup_tools_only() {
 }
 
 e2e() {
-    declare oidcIssuerUrl="$1"
-    declare oidcClientId="$2"
-    declare oidcClientSecret="$3"
+    declare serverId="$1"
+    declare clientId="$2"
+    declare tenantId="$3"
     declare contextName="$4"
     declare clusterName="$5"
     declare clusterUrl="$6"
     declare cadata="$7"
     declare spinnakerHost="$8"
     declare accessWebhook="$9"
-    
+
     confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
 
     test_private_connection "https://${spinnakerHost}"
@@ -297,7 +294,7 @@ e2e() {
 
     setup_tools
 
-    oidc_config "$email" "$oidcIssuerUrl" "$oidcClientId" "$oidcClientSecret"
+    oidc_config "$serverId" "$clientId" "$tenantId"
     cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
     spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
 
