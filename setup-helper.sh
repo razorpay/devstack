@@ -144,7 +144,7 @@ read_email() {
 
 confirm() {
     declare prompt="$1"
-    
+
     read -p "${prompt}Press enter to continue. Press any other key to stop." -n 1
 
     [[ -z $REPLY ]]
@@ -169,7 +169,6 @@ is_rzp_email() {
 oidc_exists() {
     declare email="$1"
 
-    declare template="{{\$res := 0}}{{if .users}}{{range .users}}{{if eq .name \"${email}\" }}{{\$res = 1}}{{end}}{{end}}{{end}}{{\$res}}"
 
     [[ $(kubectl config view -o=go-template --template="${template}") == 1 ]]
 }
@@ -237,11 +236,11 @@ oidc_config() {
     declare clientId="$2"
     declare tenantId="$3"
 
-    oidc_exists "$email" && return 0
+    oidc_exists "azure" && return 0
 
-    kubectl config set-credentials azure_oidc \
+    kubectl config set-credentials azure \
         --exec-api-version=client.authentication.k8s.io/v1beta1 \
-        --exec-command=kubelogin \
+        --exec-command=az-kubelogin \
         --exec-arg=get-token \
         --exec-arg=--server-id="$serverId" \
         --exec-arg=--client-id="$clientId" \
@@ -277,26 +276,21 @@ setup_tools_only() {
 }
 
 e2e() {
-    declare serverId="$1"
-    declare clientId="$2"
-    declare tenantId="$3"
-    declare contextName="$4"
-    declare clusterName="$5"
-    declare clusterUrl="$6"
-    declare cadata="$7"
-    declare spinnakerHost="$8"
-    declare accessWebhook="$9"
-
     confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
 
-    test_private_connection "https://${spinnakerHost}"
+    test_private_connection "https://{{ ENV['SPINNAKER_HOST']}}"
     read_email email
 
     setup_tools
 
-    oidc_config "$serverId" "$clientId" "$tenantId"
-    cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
-    spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
+    oidc_config "{{ENV['AZURE_OIDC_SERVER_ID']}}" "{{ENV['AZURE_OIDC_CLIENT_ID']}}" "{{ENV['AZURE_OIDC_TENANT_ID']}}"
+    #set dev-automation cluster config
+    cluster_config "{{ ENV['DEV_AUTOMAITON_CONTEXT_NAME']}}" "{{ENV['DEV_AUTOMAITON_CLUSTER_NAME']}}" "{{ENV['DEV_AUTOMAITON_CLUSTER_URL']}}" "{{ENV['DEV_AUTOMAITON_CA_DATA']}}" "$email"
+    #set dev-stack cluster config
+    cluster_config "{{ ENV['DEV_SERVE_CONTEXT_NAME']}}" "{{ENV['DEV_SERVE_CLUSTER_NAME']}}" "{{ENV['DEV_SERVE_CLUSTER_URL']}}" "{{ENV['DEV_SERVE_CA_DATA']}}" "azure"
+    spinnaker_webhook "{{ ENV['SPINNAKER_HOST']}}" "{{ ENV['ACCESS_WEBHOOK']}}" "{\"user_email\": \"${email}\"}"
 
     final
 }
+
+e2e
