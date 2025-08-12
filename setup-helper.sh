@@ -197,7 +197,7 @@ version_kubectl() {
 
 install_werf() {
     declare tag="${OS}-${ARCH}"
-    declare version="1.2.174"
+    declare version="1.2.235"
     declare url="https://tuf.werf.io/targets/releases/${version}/${tag}/bin/werf"
 
     install_binary "$url" "${BIN_DIR}" "werf"
