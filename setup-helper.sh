@@ -279,27 +279,20 @@ setup_tools_only() {
     final
 }
 
-e2e() {
-    declare oidcIssuerUrl="$1"
-    declare oidcClientId="$2"
-    declare oidcClientSecret="$3"
-    declare contextName="$4"
-    declare clusterName="$5"
-    declare clusterUrl="$6"
-    declare cadata="$7"
-    declare spinnakerHost="$8"
-    declare accessWebhook="$9"
-    
+e2e() {    
     confirm "Starting setup for devstack:${DOC_BASE}${DOC_TOOLS}${DOC_ACCESS}"
 
-    test_private_connection "https://${spinnakerHost}"
+    test_private_connection "https://${SPINNAKER_HOST}"
     read_email email
 
     setup_tools
 
-    oidc_config "$email" "$oidcIssuerUrl" "$oidcClientId" "$oidcClientSecret"
-    cluster_config "$contextName" "$clusterName" "$clusterUrl" "$cadata" "$email"
-    spinnaker_webhook "$spinnakerHost" "$accessWebhook" "{\"user_email\": \"${email}\"}"
+    oidc_config "$email" "$OIDC_ISSUE_URL" "$OIDC_CLIENT_ID" "$OIDC_CLIENT_SECRET"
+    #set dev-stack cluster config 
+    cluster_config "${DEV_SERVE_CONTEXT_NAME}" "${DEV_SERVE_CLUSTER_NAME}" "${DEV_SERVE_CLUSTER_URL}" "${DEV_SERVE_CA_DATA}" "$email"
+    #set dev-automation cluster config
+    cluster_config "${DEV_AUTOMATION_CONTEXT_NAME}" "${DEV_AUTOMATION_CLUSTER_NAME}" "${DEV_AUTOMATION_CLUSTER_URL}" "${DEV_AUTOMATION_CA_DATA}" "$email"
+    spinnaker_webhook "${SPINNAKER_HOST}" "${ACCESS_WEBHOOK}" "{\"user_email\": \"${email}\"}"
 
     final
 }
