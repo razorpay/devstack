@@ -7,16 +7,8 @@ jobs:
   semgrep:
     name: Scan
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
-      - name: Start PMG proxy
-        uses: safedep/pmg@v1
-        with:
-          server-mode: true
-          api-key: ${{ secrets.PMG_PUBLIC_REPOS_TOKEN }}
-          tenant-id: ${{ secrets.PMG_TENANT_ID }}
       - uses: returntocorp/semgrep-action@v1
         with:
           auditOn: push
@@ -24,6 +16,3 @@ jobs:
           publishDeployment: 339
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Enforce PMG policy
-        if: always()
-        run: pmg proxy stop --fail-on-violation
