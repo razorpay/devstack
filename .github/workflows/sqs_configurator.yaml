@@ -8,12 +8,20 @@ jobs:
   sqsc:
     runs-on: ubuntu-latest
     name: Build SQS configurator image
+    permissions:
+      contents: read
     steps:
       - name: checkout
         id: checkout
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Start PMG proxy
+        uses: safedep/pmg@v1
+        with:
+          server-mode: true
+          api-key: ${{ secrets.PMG_PUBLIC_REPOS_TOKEN }}
+          tenant-id: ${{ secrets.PMG_TENANT_ID }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Cache Docker layers
@@ -36,3 +44,6 @@ jobs:
           tags: razorpay/devstack:sqsc
           push: true
           file: ./hooks/sqs_configurator/Dockerfile
+      - name: Enforce PMG policy
+        if: always()
+        run: pmg proxy stop --fail-on-violation
